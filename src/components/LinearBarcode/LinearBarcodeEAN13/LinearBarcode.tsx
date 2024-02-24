@@ -1,7 +1,8 @@
 import calculateDigits from "./calculateDigits";
+import checkDigits from "./checkDigits";
+import convertDataCharactersToLinearBarcodeData from "./convertDataCharactersToLinearBarcodeData";
 import render from "./render";
 import { LinearBarcodeData } from "./types";
-import validate from "./validate";
 
 /**
  * EAN-13 linear barcode
@@ -11,24 +12,43 @@ import validate from "./validate";
 export default class LinearBarcodeEAN13 {
   private readonly linearBarcodeData: LinearBarcodeData;
 
-  constructor(linearBarcodeData: LinearBarcodeData) {
-    if (!validate(linearBarcodeData)) {
-      throw new Error("Invalid linear barcode data!");
-    }
-    this.linearBarcodeData = linearBarcodeData;
-  }
-
   /**
-   * Validates the linear barcode data
-   * @param linearBarcodeData - The linear barcode data
-   * @returns true if the linear barcode data is valid
+   * Constructs a new instance with the given digits.
+   * @param digits - The digits
    */
-  static validate(linearBarcodeData: LinearBarcodeData): boolean {
-    return validate(linearBarcodeData);
+  constructor(digits: number[]);
+  /**
+   * Constructs a new instance with the given data of a linear barcode.
+   * @param linearBarcodeData - The data of a linear barcode
+   */
+  constructor(linearBarcodeData: LinearBarcodeData);
+  constructor(digitsOrLinearBarcodeData: LinearBarcodeData | number[]) {
+    if (Array.isArray(digitsOrLinearBarcodeData)) {
+      if (digitsOrLinearBarcodeData.length !== 12) {
+        throw new Error("Invalid digits!");
+      }
+      this.linearBarcodeData = convertDataCharactersToLinearBarcodeData(
+        digitsOrLinearBarcodeData,
+      );
+    } else {
+      const digits = calculateDigits(digitsOrLinearBarcodeData);
+      if (!checkDigits(digits)) {
+        throw new Error("Check digit is invalid!");
+      }
+      this.linearBarcodeData = digitsOrLinearBarcodeData;
+    }
   }
 
   /**
-   * Calculates the digits
+   * Gets the default data characters.
+   * @returns The data characters
+   */
+  static getDefaultDataCharacters(): number[] {
+    return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  }
+
+  /**
+   * Calculates the digits.
    * @returns The digits
    */
   getDigits(): number[] {
@@ -36,8 +56,8 @@ export default class LinearBarcodeEAN13 {
   }
 
   /**
-   * Gets the default linear barcode data
-   * @returns The default linear barcode data
+   * Gets the default data of a linear barcode.
+   * @returns The data of a linear barcode
    */
   static getDefaultLinearBarcodeData(): LinearBarcodeData {
     return {
@@ -61,23 +81,19 @@ export default class LinearBarcodeEAN13 {
   }
 
   /**
-   * Gets the linear barcode data
-   * @returns The linear barcode data
+   * Gets the data of a linear barcode.
+   * @returns The data of a linear barcode
    */
   getLinearBarcodeData(): LinearBarcodeData {
     return this.linearBarcodeData;
   }
 
   /**
-   * Renders the linear barcode
-   * @param style - The style
+   * Renders the linear barcode.
    * @param options - The options
    * @returns The SVG image
    */
-  render(
-    style?: React.CSSProperties,
-    options?: { showDigits?: boolean },
-  ): JSX.Element {
-    return render(this.linearBarcodeData, style, options);
+  render(options?: { showDigits?: boolean }): JSX.Element {
+    return render(this.linearBarcodeData, options);
   }
 }

@@ -1,0 +1,18 @@
+---
+sidebar_position: 1
+---
+
+import CreateLinearBarcodeFromDigitsPlayground from "../../../src/components/LinearBarcode/CreateLinearBarcodeFromDigitsPlayground";
+import LinearBarcodeEAN13 from "../../../src/components/LinearBarcode/LinearBarcodeEAN13";
+
+# 一次元コードとは。
+
+要するにバーコードのことです。こういうやつです。
+
+<p style={{ width: "350px" }}>
+  {new LinearBarcodeEAN13([4, 5, 6, 9, 9, 5, 1, 1, 1, 6, 1, 7]).render()}
+</p>
+
+とりあえず、下のプレイグラウンドで遊んでみてください。数字を入力欄に入力したら、対応する一次元コードが表示されます。これから、これの仕組みを解説していきます。
+
+<CreateLinearBarcodeFromDigitsPlayground />

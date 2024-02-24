@@ -3,8 +3,8 @@ import calculateDigits from "./calculateDigits";
 import {
   barcodeHeight,
   centreGuardBarPattern,
-  digitsBarsSpace,
-  digitsFontFamily,
+  digitBarSpace,
+  digitFontFamily,
   guardBarHeight,
   leftQuietZoneWidth,
   normalGuardBarPattern,
@@ -15,38 +15,36 @@ import {
 import { LinearBarcodeData } from "./types";
 
 /**
+ * The offset Y of the digit
+ *
+ * @remarks
+ * The actual offset Y is symbolHeight + xDimension * digitsBarsSpace.
+ */
+const digitOffsetY = symbolHeight + xDimension * digitBarSpace * 9;
+/**
+ * The font size of the digit
+ *
+ * @remarks
+ * This value is not specified in the specification.
+ */
+const digitFontSize = 3.5;
+
+/**
  * Renders the linear barcode
- * @param linearBarcodeData - The linear barcode data
- * @param style - The style
+ * @param linearBarcodeData - The data of a linear barcode
  * @param options - The options
  * @returns The SVG image
  */
 export default function render(
   linearBarcodeData: LinearBarcodeData,
-  style?: React.CSSProperties,
   options?: { showDigits?: boolean },
 ): JSX.Element {
-  /**
-   * The offset Y of the digit
-   *
-   * @remarks
-   * The actual offset Y is symbolHeight + xDimension * digitsBarsSpace.
-   */
-  const digitOffsetY = symbolHeight + xDimension * digitsBarsSpace * 9;
-  /**
-   * The font size of the digit
-   *
-   * @remarks
-   * This value is not specified in the specification.
-   */
-  const digitFontSize = 3.5;
-
   const leadingDigitImage = (
     <text
       x="0"
       y={digitOffsetY}
       fontSize={digitFontSize}
-      fontFamily={digitsFontFamily}
+      fontFamily={digitFontFamily}
     >
       {calculateDigits(linearBarcodeData)[0]}
     </text>
@@ -99,7 +97,7 @@ export default function render(
                 }
                 y={digitOffsetY}
                 fontSize={digitFontSize}
-                fontFamily={digitsFontFamily}
+                fontFamily={digitFontFamily}
               >
                 {calculateDigits(linearBarcodeData)[symbolCharacterIndex + 1]}
               </text>
@@ -160,7 +158,7 @@ export default function render(
                 }
                 y={digitOffsetY}
                 fontSize={digitFontSize}
-                fontFamily={digitsFontFamily}
+                fontFamily={digitFontFamily}
               >
                 {calculateDigits(linearBarcodeData)[symbolCharacterIndex + 7]}
               </text>
@@ -189,10 +187,7 @@ export default function render(
   );
 
   return (
-    <svg
-      viewBox={`0 0 ${xDimension * symbolLength} ${barcodeHeight}`}
-      style={style}
-    >
+    <svg viewBox={`0 0 ${xDimension * symbolLength} ${barcodeHeight}`}>
       <rect
         x="0"
         y="0"

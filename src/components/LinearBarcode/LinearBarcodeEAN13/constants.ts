@@ -53,7 +53,7 @@ export const guardBarHeight = symbolHeight + xDimension * 5;
  * @remarks
  * The minimum space is 0.5 times the X-dimension. Normally, the space is 1 times the X-dimension.
  */
-export const digitsBarsSpace = 1;
+export const digitBarSpace = 1;
 
 /**
  * The height of the barcode.
@@ -64,19 +64,22 @@ export const digitsBarsSpace = 1;
 export const barcodeHeight = 25.93;
 
 /**
- * The font family of the digits.
- */
-export const digitsFontFamily = "OCR-B";
-
-/**
- * number set
+ * The font family of the digit.
  *
  * @remarks
- * A number set maps a digit to its corresponding symbol character composition.
+ * A clearly legible font shall be used for the digits and OCR-B is recommended.
+ */
+export const digitFontFamily = "OCR-B";
+
+/**
+ * Number set
+ *
+ * @remarks
+ * A number set maps a digit to its corresponding pattern of symbol characters.
  */
 type NumberSet = {
   digit: number;
-  symbolCharacterComposition: [
+  symbolCharacterPattern: [
     boolean,
     boolean,
     boolean,
@@ -88,7 +91,7 @@ type NumberSet = {
 }[];
 
 /**
- * number set A
+ * Number set A
  *
  * @remarks
  * The number set A is used for the left half of the symbol.
@@ -96,48 +99,48 @@ type NumberSet = {
 export const numberSetA: NumberSet = [
   {
     digit: 0,
-    symbolCharacterComposition: [false, false, false, true, true, false, true],
+    symbolCharacterPattern: [false, false, false, true, true, false, true],
   },
   {
     digit: 1,
-    symbolCharacterComposition: [false, false, true, true, false, false, true],
+    symbolCharacterPattern: [false, false, true, true, false, false, true],
   },
   {
     digit: 2,
-    symbolCharacterComposition: [false, false, true, false, false, true, true],
+    symbolCharacterPattern: [false, false, true, false, false, true, true],
   },
   {
     digit: 3,
-    symbolCharacterComposition: [false, true, true, true, true, false, true],
+    symbolCharacterPattern: [false, true, true, true, true, false, true],
   },
   {
     digit: 4,
-    symbolCharacterComposition: [false, true, false, false, false, true, true],
+    symbolCharacterPattern: [false, true, false, false, false, true, true],
   },
   {
     digit: 5,
-    symbolCharacterComposition: [false, true, true, false, false, false, true],
+    symbolCharacterPattern: [false, true, true, false, false, false, true],
   },
   {
     digit: 6,
-    symbolCharacterComposition: [false, true, false, true, true, true, true],
+    symbolCharacterPattern: [false, true, false, true, true, true, true],
   },
   {
     digit: 7,
-    symbolCharacterComposition: [false, true, true, true, false, true, true],
+    symbolCharacterPattern: [false, true, true, true, false, true, true],
   },
   {
     digit: 8,
-    symbolCharacterComposition: [false, true, true, false, true, true, true],
+    symbolCharacterPattern: [false, true, true, false, true, true, true],
   },
   {
     digit: 9,
-    symbolCharacterComposition: [false, false, false, true, false, true, true],
+    symbolCharacterPattern: [false, false, false, true, false, true, true],
   },
 ];
 
 /**
- * number set B
+ * Number set B
  *
  * @remarks
  * The number set B is used for the left half of the symbol.
@@ -145,48 +148,48 @@ export const numberSetA: NumberSet = [
 export const numberSetB: NumberSet = [
   {
     digit: 0,
-    symbolCharacterComposition: [false, true, false, false, true, true, true],
+    symbolCharacterPattern: [false, true, false, false, true, true, true],
   },
   {
     digit: 1,
-    symbolCharacterComposition: [false, true, true, false, false, true, true],
+    symbolCharacterPattern: [false, true, true, false, false, true, true],
   },
   {
     digit: 2,
-    symbolCharacterComposition: [false, false, true, true, false, true, true],
+    symbolCharacterPattern: [false, false, true, true, false, true, true],
   },
   {
     digit: 3,
-    symbolCharacterComposition: [false, true, false, false, false, false, true],
+    symbolCharacterPattern: [false, true, false, false, false, false, true],
   },
   {
     digit: 4,
-    symbolCharacterComposition: [false, false, true, true, true, false, true],
+    symbolCharacterPattern: [false, false, true, true, true, false, true],
   },
   {
     digit: 5,
-    symbolCharacterComposition: [false, true, true, true, false, false, true],
+    symbolCharacterPattern: [false, true, true, true, false, false, true],
   },
   {
     digit: 6,
-    symbolCharacterComposition: [false, false, false, false, true, false, true],
+    symbolCharacterPattern: [false, false, false, false, true, false, true],
   },
   {
     digit: 7,
-    symbolCharacterComposition: [false, false, true, false, false, false, true],
+    symbolCharacterPattern: [false, false, true, false, false, false, true],
   },
   {
     digit: 8,
-    symbolCharacterComposition: [false, false, false, true, false, false, true],
+    symbolCharacterPattern: [false, false, false, true, false, false, true],
   },
   {
     digit: 9,
-    symbolCharacterComposition: [false, false, true, false, true, true, true],
+    symbolCharacterPattern: [false, false, true, false, true, true, true],
   },
 ];
 
 /**
- * number set C
+ * Number set C
  *
  * @remarks
  * The number set C is used for the right half of the symbol.
@@ -194,63 +197,66 @@ export const numberSetB: NumberSet = [
 export const numberSetC: NumberSet = [
   {
     digit: 0,
-    symbolCharacterComposition: [true, true, true, false, false, true, false],
+    symbolCharacterPattern: [true, true, true, false, false, true, false],
   },
   {
     digit: 1,
-    symbolCharacterComposition: [true, true, false, false, true, true, false],
+    symbolCharacterPattern: [true, true, false, false, true, true, false],
   },
   {
     digit: 2,
-    symbolCharacterComposition: [true, true, false, true, true, false, false],
+    symbolCharacterPattern: [true, true, false, true, true, false, false],
   },
   {
     digit: 3,
-    symbolCharacterComposition: [true, false, false, false, false, true, false],
+    symbolCharacterPattern: [true, false, false, false, false, true, false],
   },
   {
     digit: 4,
-    symbolCharacterComposition: [true, false, true, true, true, false, false],
+    symbolCharacterPattern: [true, false, true, true, true, false, false],
   },
   {
     digit: 5,
-    symbolCharacterComposition: [true, false, false, true, true, true, false],
+    symbolCharacterPattern: [true, false, false, true, true, true, false],
   },
   {
     digit: 6,
-    symbolCharacterComposition: [true, false, true, false, false, false, false],
+    symbolCharacterPattern: [true, false, true, false, false, false, false],
   },
   {
     digit: 7,
-    symbolCharacterComposition: [true, false, false, false, true, false, false],
+    symbolCharacterPattern: [true, false, false, false, true, false, false],
   },
   {
     digit: 8,
-    symbolCharacterComposition: [true, false, false, true, false, false, false],
+    symbolCharacterPattern: [true, false, false, true, false, false, false],
   },
   {
     digit: 9,
-    symbolCharacterComposition: [true, true, true, false, true, false, false],
+    symbolCharacterPattern: [true, true, true, false, true, false, false],
   },
 ];
 
 /**
- * normal guard bar pattern (right and left)
+ * Normal guard bar pattern (right and left)
  */
 export const normalGuardBarPattern = [true, false, true];
 
 /**
- * centre guard bar pattern
+ * Centre guard bar pattern
  */
 export const centreGuardBarPattern = [false, true, false, true, false];
 
 /**
- * Map of a leading digit to their corresponding number set types.
+ * Map of a leading digit to its corresponding number set types.
  *
  * @remarks
  * The leading digit is encoded by the variable parity mix of number sets A and B for the six symbol characters in the left half of the symbol.
  */
-export const leadingDigitNumberSetTypesMap = [
+export const leadingDigitNumberSetTypesMap: {
+  leadingDigit: number;
+  numberSetTypes: ("A" | "B")[];
+}[] = [
   {
     leadingDigit: 0,
     numberSetTypes: ["A", "A", "A", "A", "A", "A"],

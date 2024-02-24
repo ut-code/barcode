@@ -1,0 +1,13 @@
+.dataCharactersContainer {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 4px;
+}
+
+.inputField {
+  width: 48px;
+}
+
+.linearBarcode {
+  width: 350px;
+}
