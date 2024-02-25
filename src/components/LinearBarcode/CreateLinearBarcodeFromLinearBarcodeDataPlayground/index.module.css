@@ -1,0 +1,22 @@
+.symbolCharactersContainer {
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(6, 100px);
+  gap: 16px;
+}
+
+.symbolCharacterLabel {
+  font-size: 12px;
+}
+
+.dataCharacterInfo {
+  font-size: 12px;
+}
+
+.numberSetTypeInfo {
+  font-size: 12px;
+}
+
+.linearBarcode {
+  width: 350px;
+}
