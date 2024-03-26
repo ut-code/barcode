@@ -1,4 +1,4 @@
-console.log(stringToData("WE LOVE KIMWIPE"));
+// console.log(stringToData("WE LOVE KIMWIPE"));
 
 // 共に、はじめの0は省略される。例：00110 → 110
 function stringToData(string) {
