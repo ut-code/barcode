@@ -5,7 +5,7 @@ function stringToData(string) {
   const bitData = stringToBitData(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
-  return [bitData.toString(2), errorCorrectionCode.toString(2)];
+  return [bitData, errorCorrectionCode];
 }
 
 function answerOfNumberToAlfa(alfa) {
@@ -120,7 +120,8 @@ function stringToBitData(string) {
 
   // 埋め草コード語
   let i = 0;
-  for (; i < Math.floor((128 - bitLength) / 8); ++i) {
+  const restOfBit = 128 - bitLength;
+  for (; i < Math.floor(restOfBit / 8); ++i) {
     if (i % 2 === 0) {
       dataBit = dataBit << BigInt(8);
       bitLength += 8;
@@ -130,15 +131,6 @@ function stringToBitData(string) {
       bitLength += 8;
       dataBit += BigInt(17);
     }
-  }
-  if (i % 2 === 0) {
-    dataBit = dataBit << BigInt(8);
-    bitLength += 8;
-    dataBit += BigInt(236);
-  } else {
-    dataBit = dataBit << BigInt(8);
-    bitLength += 8;
-    dataBit += BigInt(17);
   }
   // console.log(dataBit.toString(2));
   return dataBit;
@@ -209,3 +201,5 @@ function bitDataToErrorCorrectionCode(data) {
   // console.log(result.toString(2));
   return result;
 }
+
+export default stringToData;
