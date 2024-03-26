@@ -18,7 +18,7 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
     height="20"
     fill={fill}
     stroke="lightgray"
-    strokeWidth="0.1"
+    strokeWidth="0.05"
     onMouseDown={toggleFill}
     onMouseEnter={handleMouseEnter}
   />
@@ -97,7 +97,7 @@ const CreateAnswer = () => {
             height="422"
             style={{
               // border: "1px solid black",
-              background: "lightgray",
+              // background: "lightgray",
               margin: "50px",
             }}
             onMouseUp={handleMouseUp}
@@ -135,9 +135,15 @@ function stringToTwoDimensionalBarcode(
   console.log("bitdata", bitData.toString(2));
   console.log("errorCorrectionCode", errorCorrectionCode.toString(2));
 
+  // 初期化
   const newSquares = squares.map((row: string[], rIndex: number) =>
     row.map((col: string, cIndex: number) => col),
   );
+  for (let i = 0; i < 21; ++i) {
+    for (let j = 0; j < 21; ++j) {
+      newSquares[i][j] = "white";
+    }
+  }
   setSquares(newSquares);
 
   for (let i = 0; i < 21; ++i) {
