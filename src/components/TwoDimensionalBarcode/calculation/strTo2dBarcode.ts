@@ -2,10 +2,11 @@ import strToEisuData from "./utils/strToEisuData";
 import strTo8bitData from "./utils/strTo8bitData";
 import strToSjisData from "./utils/strToSjisData";
 import makeOrderArrayForData from "./utils/makeOrderArrayForData";
+import { EncodingMode } from "../types";
 
 export default function strTo2dBarcode(
   inputText: string,
-  mode: string,
+  mode: EncodingMode,
 ): boolean[][] {
   let data: bigint[] = [];
   if (mode === "8bit") {
@@ -18,10 +19,9 @@ export default function strTo2dBarcode(
   const bitData: bigint = data[0];
   const errorCorrectionCode: bigint = data[1];
 
-  const newSquares = new Array(21)
+  const newSquares: boolean[][] = new Array(21)
     .fill(false)
     .map(() => new Array(21).fill(false));
-  console.log("initial", newSquares);
 
   // フォーマット情報を埋める
   for (let i = 0; i < 21; ++i) {
