@@ -1,12 +1,20 @@
-import stringToData from "./strungToData";
-import makeOrderArrayForData from "../calculation/ makeOrderArrayForData";
+import stringToData from "./stringToData";
+import stringToDataForEightBitByte from "./8bitCodestringToData";
+import makeOrderArrayForData from "./ makeOrderArrayForData";
 
+// stringとsquaresを用意すれば、squaresに二次元バーコードを作成できる
 export default function stringToTwoDimensionalBarcode(
   string: string,
   squares: string[][],
   setSquares: React.Dispatch<React.SetStateAction<string[][]>>,
+  mode: string,
 ) {
-  const data: bigint[] = stringToData(string);
+  let data: bigint[] = [];
+  if (mode === "2") {
+    data = stringToDataForEightBitByte(string);
+  } else if (mode === "1") {
+    data = stringToData(string);
+  }
   const bitData: bigint = data[0];
   const errorCorrectionCode: bigint = data[1];
   // console.log("bitdata", bitData.toString(2));

@@ -1,8 +1,6 @@
-// console.log(stringToData("WE LOVE KIMWIPE"));
-
 // 共に、はじめの0は省略される。例：00110 → 110
-function stringToData(string) {
-  const bitData = stringToBitData(string);
+function stringToDataForEightBitByte(string) {
+  const bitData = stringToBitDataForEightBitByte(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
   return [bitData, errorCorrectionCode];
@@ -23,56 +21,17 @@ function answerOfNumberToAlfa(alfa) {
   }
 }
 
-function stringToNumber(letter) {
-  const stringToNumberTable = [
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    " ",
-    "$",
-    "%",
-    "*",
-    "+",
-    "-",
-    ".",
-    "/",
-    ":",
-  ];
-  for (let i = 0; i < stringToNumberTable.length; ++i) {
-    if (letter === stringToNumberTable[i]) {
+function stringToNumberForEightBitByte(letter) {
+  const asciiArray = [];
+  for (let i = 0; i < 128; i++) {
+    asciiArray.push(String.fromCharCode(i));
+  }
+
+  // 配列の中身を表示
+  // console.log(asciiArray);
+
+  for (let i = 0; i < asciiArray.length; ++i) {
+    if (letter === asciiArray[i]) {
       return i;
     }
   }
@@ -80,34 +39,24 @@ function stringToNumber(letter) {
   return -1;
 }
 
-//  string例
-// const string = "UT.CODE"
-function stringToBitData(string) {
+function stringToBitDataForEightBitByte(string) {
   let bitLength = 0;
 
   let dataBit = BigInt(0);
 
-  // 英数字モード
-  dataBit += BigInt(2);
+  // 8bitバイト
+  dataBit += BigInt(4);
   bitLength += 4;
 
   // 文字数
-  dataBit = dataBit << BigInt(9);
+  dataBit = dataBit << BigInt(8);
   dataBit += BigInt(string.length);
-  bitLength += 9;
+  bitLength += 8;
 
-  for (let i = 0; i < Math.floor(string.length / 2); ++i) {
-    dataBit = dataBit << BigInt(11);
-    bitLength += 11;
-    dataBit += BigInt(
-      stringToNumber(string.charAt(2 * i)) * 45 +
-        stringToNumber(string.charAt(2 * i + 1)),
-    );
-  }
-  if (string.length % 2 !== 0) {
-    dataBit = dataBit << BigInt(6);
-    bitLength += 6;
-    dataBit += BigInt(stringToNumber(string.charAt(string.length - 1)));
+  for (let i = 0; i < string.length; ++i) {
+    dataBit = dataBit << BigInt(8);
+    bitLength += 8;
+    dataBit += BigInt(stringToNumberForEightBitByte(string.charAt(i)));
   }
   // 終端パターン
   dataBit = dataBit << BigInt(4);
@@ -133,6 +82,7 @@ function stringToBitData(string) {
     }
   }
   // console.log(dataBit.toString(2));
+  // console.log(bitLength)
   return dataBit;
 }
 
@@ -144,8 +94,6 @@ function bitDataToDataArray(dataBit) {
   }
   return dataArray;
 }
-
-// console.log(stringToBitData("WE LOVE KIMWIPE"));
 
 // データを用いて、誤り訂正符号の作成までを行う。
 // data例
@@ -198,8 +146,8 @@ function bitDataToErrorCorrectionCode(data) {
 
   // 誤り訂正符号の多項式
   const result = r >> BigInt(8);
-  // console.log(result.toString(2));
+
   return result;
 }
 
-export default stringToData;
+export default stringToDataForEightBitByte;
