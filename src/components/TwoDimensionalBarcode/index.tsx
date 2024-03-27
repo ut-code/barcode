@@ -24,12 +24,15 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
 );
 
 const CreateTwoDimensionalBarcode = () => {
-  const [squares, setSquares] = useState(() => {
-    const savedSquares = localStorage.getItem("squares");
-    return savedSquares
-      ? JSON.parse(savedSquares)
-      : Array(21).fill(Array(21).fill("white"));
-  });
+  const [squares, setSquares] = useState(Array(21).fill(Array(21).fill(false)));
+
+  useEffect(() => {
+    // docusaurus の SSR への対応
+    const value = localStorage.getItem("squares");
+    if (value) {
+      setSquares(JSON.parse(value));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("squares", JSON.stringify(squares));
@@ -38,10 +41,10 @@ const CreateTwoDimensionalBarcode = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   const toggleFill = (rowIndex: number, colIndex: number) => {
-    const newSquares = squares.map((row: string[], rIndex: number) =>
+    const newSquares = squares.map((row: boolean[], rIndex: number) =>
       rIndex === rowIndex
-        ? row.map((col: string, cIndex: number) =>
-            cIndex === colIndex ? (col === "white" ? "black" : "white") : col,
+        ? row.map((col: boolean, cIndex: number) =>
+            cIndex === colIndex ? !col : col,
           )
         : row,
     );
@@ -65,7 +68,7 @@ const CreateTwoDimensionalBarcode = () => {
 
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
-      setSquares(Array(21).fill(Array(21).fill("white")));
+      setSquares(Array(21).fill(Array(21).fill(false)));
     }
   };
 
@@ -85,7 +88,7 @@ const CreateTwoDimensionalBarcode = () => {
                   key={`${rowIndex}-${colIndex}`}
                   x={colIndex * 20 + 1}
                   y={rowIndex * 20 + 1}
-                  fill={squares[rowIndex][colIndex]}
+                  fill={squares[rowIndex][colIndex] ? "black" : "white"}
                   toggleFill={() => handleMouseDown(rowIndex, colIndex)}
                   handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 />
