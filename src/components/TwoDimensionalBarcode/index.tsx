@@ -3,7 +3,7 @@ import Playground from "../Playground";
 import strTo2dBarcode from "./calculation/strTo2dBarcode";
 import { EncodingMode } from "./types";
 
-interface SquareProps {
+interface CellRectProps {
   x: number;
   y: number;
   fill: string;
@@ -11,7 +11,13 @@ interface SquareProps {
   handleMouseEnter: () => void;
 }
 
-const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
+const CellRect = ({
+  x,
+  y,
+  fill,
+  toggleFill,
+  handleMouseEnter,
+}: CellRectProps) => (
   <rect
     x={x}
     y={y}
@@ -26,45 +32,44 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
 );
 
 const CreateTwoDimensionalBarcode = () => {
-  const [squares, setSquares] = useState<boolean[][]>(
-    Array(21).fill(Array(21).fill(false)),
+  const [cells, setCells] = useState<boolean[][]>(
+    new Array(21).fill(false).map(() => new Array(21).fill(false)),
   );
-
-  useEffect(() => {
-    // docusaurus の SSR への対応
-    const value = localStorage.getItem("squares");
-    if (value) {
-      setSquares(JSON.parse(value));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("squares", JSON.stringify(squares));
-  }, [squares]);
-
   const [isDragging, setIsDragging] = useState(false);
   const [messageInput, setMessageInput] = useState<string>("");
   const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
 
-  const toggleFill = (rowIndex: number, colIndex: number) => {
-    const newSquares = squares.map((row: boolean[], rIndex: number) =>
-      rIndex === rowIndex
-        ? row.map((col: boolean, cIndex: number) =>
-            cIndex === colIndex ? !col : col,
+  useEffect(() => {
+    // docusaurus の SSR への対応
+    const value = localStorage.getItem("2dBarCodeCells");
+    if (value) {
+      setCells(JSON.parse(value));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeCells", JSON.stringify(cells));
+  }, [cells]);
+
+  const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
+    const newCells = cells.map((row: boolean[], rowIndex: number) =>
+      rowIndex === targetRowIndex
+        ? row.map((isBlack: boolean, colIndex: number) =>
+            colIndex === targetColIndex ? !isBlack : isBlack,
           )
         : row,
     );
-    setSquares(newSquares);
+    setCells(newCells);
   };
 
   const handleMouseDown = (rowIndex: number, colIndex: number) => {
     setIsDragging(true);
-    toggleFill(rowIndex, colIndex);
+    toggleCellColor(rowIndex, colIndex);
   };
 
   const handleMouseEnter = (rowIndex: number, colIndex: number) => {
     if (isDragging) {
-      toggleFill(rowIndex, colIndex);
+      toggleCellColor(rowIndex, colIndex);
     }
   };
 
@@ -74,7 +79,7 @@ const CreateTwoDimensionalBarcode = () => {
 
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
-      setSquares(Array(21).fill(Array(21).fill(false)));
+      setCells(new Array(21).fill(false).map(() => new Array(21).fill(false)));
     }
   };
 
@@ -100,7 +105,7 @@ const CreateTwoDimensionalBarcode = () => {
             </select>
             <button
               onClick={() => {
-                setSquares(strTo2dBarcode(messageInput, modeSelect));
+                setCells(strTo2dBarcode(messageInput, modeSelect));
               }}
             >
               二次元コードを作成
@@ -112,13 +117,13 @@ const CreateTwoDimensionalBarcode = () => {
             style={{ border: "1px solid black", background: "lightgray" }}
             onMouseUp={handleMouseUp}
           >
-            {squares.map((row: boolean[], rowIndex: number) =>
+            {cells.map((row: boolean[], rowIndex: number) =>
               row.map((_: boolean, colIndex: number) => (
-                <Square
+                <CellRect
                   key={`${rowIndex}-${colIndex}`}
                   x={colIndex * 20 + 1}
                   y={rowIndex * 20 + 1}
-                  fill={squares[rowIndex][colIndex] ? "black" : "white"}
+                  fill={cells[rowIndex][colIndex] ? "black" : "white"}
                   toggleFill={() => handleMouseDown(rowIndex, colIndex)}
                   handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 />
