@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Playground from "../Playground";
-import stringToTwoDimensionalBarcode from "./calculation/stringToTwoDimensionalBarcode";
+import strTo2dBarcode from "./calculation/strTo2dBarcode";
 
 interface SquareProps {
   x: number;
@@ -95,9 +95,7 @@ const CreateTwoDimensionalBarcode = () => {
             </select>
             <button
               onClick={() => {
-                setSquares(
-                  stringToTwoDimensionalBarcode(messageInput, modeSelect),
-                );
+                setSquares(strTo2dBarcode(messageInput, modeSelect));
               }}
             >
               二次元コードを作成

@@ -1,7 +1,7 @@
 // console.log(stringToData("WE LOVE KIMWIPE"));
 
 // 共に、はじめの0は省略される。例：00110 → 110
-function stringToData(string) {
+function strToEisuData(string) {
   const bitData = stringToBitData(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
@@ -199,4 +199,4 @@ function bitDataToErrorCorrectionCode(data) {
   return result;
 }
 
-export default stringToData;
+export default strToEisuData;

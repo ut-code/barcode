@@ -1,19 +1,19 @@
-import stringToData from "./stringToData";
-import stringToDataForEightBitByte from "./8bitCodestringToData";
-import makeOrderArrayForData from "./ makeOrderArrayForData";
-import stringToDataForShiftJIS from "./stringToDataForShiftJIS";
+import strToEisuData from "./utils/strToEisuData";
+import strTo8bitData from "./utils/strTo8bitData";
+import strToSjisData from "./utils/strToSjisData";
+import makeOrderArrayForData from "./utils/makeOrderArrayForData";
 
-export default function stringToTwoDimensionalBarcode(
+export default function strTo2dBarcode(
   inputText: string,
   mode: string,
 ): boolean[][] {
   let data: bigint[] = [];
   if (mode === "8bit") {
-    data = stringToDataForEightBitByte(inputText);
+    data = strTo8bitData(inputText);
   } else if (mode === "eisu") {
-    data = stringToData(inputText);
+    data = strToEisuData(inputText);
   } else if (mode === "sjis") {
-    data = stringToDataForShiftJIS(inputText);
+    data = strToSjisData(inputText);
   }
   const bitData: bigint = data[0];
   const errorCorrectionCode: bigint = data[1];
