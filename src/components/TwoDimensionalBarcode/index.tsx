@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Playground from "../Playground";
+import strTo2dBarcode from "./calculation/strTo2dBarcode";
+import { EncodingMode } from "./types";
 
 interface SquareProps {
   x: number;
@@ -24,7 +26,9 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
 );
 
 const CreateTwoDimensionalBarcode = () => {
-  const [squares, setSquares] = useState(Array(21).fill(Array(21).fill(false)));
+  const [squares, setSquares] = useState<boolean[][]>(
+    Array(21).fill(Array(21).fill(false)),
+  );
 
   useEffect(() => {
     // docusaurus の SSR への対応
@@ -39,6 +43,8 @@ const CreateTwoDimensionalBarcode = () => {
   }, [squares]);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
 
   const toggleFill = (rowIndex: number, colIndex: number) => {
     const newSquares = squares.map((row: boolean[], rIndex: number) =>
@@ -76,14 +82,38 @@ const CreateTwoDimensionalBarcode = () => {
     <>
       <Playground title="二次元コード">
         <div>
+          <div>
+            <p>文字を入れてみよう</p>
+            <input
+              type="text"
+              value={messageInput}
+              onChange={(e) => {
+                setMessageInput(e.target.value);
+              }}
+            />
+            <select
+              onChange={(e) => setModeSelect(e.target.value as EncodingMode)}
+            >
+              <option value="eisu">英数字モード</option>
+              <option value="8bit">8bitバイトモード</option>
+              <option value="sjis">shiftJISモード</option>
+            </select>
+            <button
+              onClick={() => {
+                setSquares(strTo2dBarcode(messageInput, modeSelect));
+              }}
+            >
+              二次元コードを作成
+            </button>
+          </div>
           <svg
             width="422"
             height="422"
             style={{ border: "1px solid black", background: "lightgray" }}
             onMouseUp={handleMouseUp}
           >
-            {squares.map((row: string[], rowIndex: number) =>
-              row.map((_: string, colIndex: number) => (
+            {squares.map((row: boolean[], rowIndex: number) =>
+              row.map((_: boolean, colIndex: number) => (
                 <Square
                   key={`${rowIndex}-${colIndex}`}
                   x={colIndex * 20 + 1}
