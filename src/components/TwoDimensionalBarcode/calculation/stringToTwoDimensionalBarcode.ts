@@ -11,10 +11,10 @@ export default function stringToTwoDimensionalBarcode(
   mode: string,
 ) {
   let data: bigint[] = [];
-  if (mode === "2") {
-    data = stringToDataForEightBitByte(string);
-  } else if (mode === "1") {
+  if (mode === "1") {
     data = stringToData(string);
+  } else if (mode === "2") {
+    data = stringToDataForEightBitByte(string);
   } else if (mode === "3") {
     data = stringToDataForShiftJIS(string);
   }
