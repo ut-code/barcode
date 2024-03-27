@@ -1,6 +1,7 @@
 import stringToData from "./stringToData";
 import stringToDataForEightBitByte from "./8bitCodestringToData";
 import makeOrderArrayForData from "./ makeOrderArrayForData";
+import stringToDataForShiftJIS from "./stringToDataForShiftJIS";
 
 // stringとsquaresを用意すれば、squaresに二次元バーコードを作成できる
 export default function stringToTwoDimensionalBarcode(
@@ -14,6 +15,8 @@ export default function stringToTwoDimensionalBarcode(
     data = stringToDataForEightBitByte(string);
   } else if (mode === "1") {
     data = stringToData(string);
+  } else if (mode === "3") {
+    data = stringToDataForShiftJIS(string);
   }
   const bitData: bigint = data[0];
   const errorCorrectionCode: bigint = data[1];

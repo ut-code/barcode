@@ -1,5 +1,7 @@
+import Encoding from "encoding-japanese";
+
 // 共に、はじめの0は省略される。例：00110 → 110
-function stringToDataForEightBitByte(string) {
+export default function stringToDataForShiftJIS(string) {
   const bitData = stringToBitDataForEightBitByte(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
@@ -21,24 +23,6 @@ function answerOfNumberToAlfa(alfa) {
   }
 }
 
-function stringToNumberForEightBitByte(letter) {
-  const asciiArray = [];
-  for (let i = 0; i < 128; i++) {
-    asciiArray.push(String.fromCharCode(i));
-  }
-
-  // 配列の中身を表示
-  // console.log(asciiArray);
-
-  for (let i = 0; i < asciiArray.length; ++i) {
-    if (letter === asciiArray[i]) {
-      return i;
-    }
-  }
-  // こっちの処理はできていない
-  return -1;
-}
-
 function stringToBitDataForEightBitByte(string) {
   let bitLength = 0;
 
@@ -48,18 +32,25 @@ function stringToBitDataForEightBitByte(string) {
   dataBit += BigInt(4);
   bitLength += 4;
 
+  // string → コード
+  const unicodeArray = Encoding.stringToCode(string); // 文字列から文字コード値の配列に変換
+  const sjisArray = Encoding.convert(unicodeArray, {
+    to: "SJIS",
+    from: "UNICODE",
+  });
+
   // 文字数
   dataBit = dataBit << BigInt(8);
-  dataBit += BigInt(string.length);
+  dataBit += BigInt(sjisArray.length);
   bitLength += 8;
 
-  for (let i = 0; i < string.length; ++i) {
+  for (let i = 0; i < sjisArray.length; ++i) {
     if (bitLength > 116) {
       break;
     }
     dataBit = dataBit << BigInt(8);
     bitLength += 8;
-    dataBit += BigInt(stringToNumberForEightBitByte(string.charAt(i)));
+    dataBit += BigInt(sjisArray[i]);
   }
   // 終端パターン
   dataBit = dataBit << BigInt(4);
@@ -152,5 +143,3 @@ function bitDataToErrorCorrectionCode(data) {
 
   return result;
 }
-
-export default stringToDataForEightBitByte;
