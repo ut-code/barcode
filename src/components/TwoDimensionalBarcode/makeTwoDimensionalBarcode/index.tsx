@@ -20,7 +20,7 @@ const Square = ({ x, y, fill }: SquareProps) => (
   />
 );
 
-const CreateAnswer = () => {
+const MakeAnswer = () => {
   const [squares, setSquares] = useState(() => {
     return Array(21).fill(Array(21).fill("white"));
   });
@@ -38,6 +38,11 @@ const CreateAnswer = () => {
     setStringForAnswer(e.target.value);
   };
 
+  const [mode, setMode] = useState<string>("1");
+  const handleModeChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+    setMode(e.currentTarget.value);
+  };
+
   return (
     <>
       <Playground title="二次元コード">
@@ -50,12 +55,29 @@ const CreateAnswer = () => {
               value={stringForAnswer}
               onChange={handleNameChange}
             ></input>
+            <div>
+              モード：
+              <select id="select" onChange={handleModeChange}>
+                <option value="1">英数字モード</option>
+                <option value="2">8bitバイトモード</option>
+                <option value="3">shiftJISモード</option>
+              </select>
+            </div>
+            <div>
+              英数字モード: "0" ~ "9", "A" ~ "Z", " ", "$", "%", "*", "+", "-",
+              ".", "/", ":" が使えます。20文字まで入力できます
+            </div>
+            <div>
+              8bitバイトモード:
+              半角文字ならだいたい使えます。14文字まで入力できます
+            </div>
             <button
               onClick={() => {
                 stringToTwoDimensionalBarcode(
                   stringForAnswer,
                   squares,
                   setSquares,
+                  mode,
                 );
               }}
             >
@@ -87,4 +109,4 @@ const CreateAnswer = () => {
   );
 };
 
-export default CreateAnswer;
+export default MakeAnswer;
