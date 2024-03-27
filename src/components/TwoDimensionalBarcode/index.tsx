@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Playground from "../Playground";
+import stringToTwoDimensionalBarcode from "./calculation/stringToTwoDimensionalBarcode";
 
 interface SquareProps {
   x: number;
@@ -39,6 +40,8 @@ const CreateTwoDimensionalBarcode = () => {
   }, [squares]);
 
   const [isDragging, setIsDragging] = useState(false);
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [modeSelect, setModeSelect] = useState<string>("eisu");
 
   const toggleFill = (rowIndex: number, colIndex: number) => {
     const newSquares = squares.map((row: boolean[], rIndex: number) =>
@@ -76,6 +79,30 @@ const CreateTwoDimensionalBarcode = () => {
     <>
       <Playground title="二次元コード">
         <div>
+          <div>
+            <p>文字を入れてみよう</p>
+            <input
+              type="text"
+              value={messageInput}
+              onChange={(e) => {
+                setMessageInput(e.target.value);
+              }}
+            />
+            <select onChange={(e) => setModeSelect(e.target.value)}>
+              <option value="eisu">英数字モード</option>
+              <option value="8bit">8bitバイトモード</option>
+              <option value="sjis">shiftJISモード</option>
+            </select>
+            <button
+              onClick={() => {
+                setSquares(
+                  stringToTwoDimensionalBarcode(messageInput, modeSelect),
+                );
+              }}
+            >
+              二次元コードを作成
+            </button>
+          </div>
           <svg
             width="422"
             height="422"

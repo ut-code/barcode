@@ -3,57 +3,47 @@ import stringToDataForEightBitByte from "./8bitCodestringToData";
 import makeOrderArrayForData from "./ makeOrderArrayForData";
 import stringToDataForShiftJIS from "./stringToDataForShiftJIS";
 
-// stringとsquaresを用意すれば、squaresに二次元バーコードを作成できる
 export default function stringToTwoDimensionalBarcode(
-  string: string,
-  squares: string[][],
-  setSquares: React.Dispatch<React.SetStateAction<string[][]>>,
+  inputText: string,
   mode: string,
-) {
+): boolean[][] {
   let data: bigint[] = [];
-  if (mode === "2") {
-    data = stringToDataForEightBitByte(string);
-  } else if (mode === "1") {
-    data = stringToData(string);
-  } else if (mode === "3") {
-    data = stringToDataForShiftJIS(string);
+  if (mode === "8bit") {
+    data = stringToDataForEightBitByte(inputText);
+  } else if (mode === "eisu") {
+    data = stringToData(inputText);
+  } else if (mode === "sjis") {
+    data = stringToDataForShiftJIS(inputText);
   }
   const bitData: bigint = data[0];
   const errorCorrectionCode: bigint = data[1];
-  // console.log("bitdata", bitData.toString(2));
-  // console.log("errorCorrectionCode", errorCorrectionCode.toString(2));
 
-  // 初期化
-  const newSquares = squares.map((row: string[], rIndex: number) =>
-    row.map((col: string, cIndex: number) => col),
-  );
-  for (let i = 0; i < 21; ++i) {
-    for (let j = 0; j < 21; ++j) {
-      newSquares[i][j] = "white";
-    }
-  }
-  setSquares(newSquares);
+  const newSquares = new Array(21)
+    .fill(false)
+    .map(() => new Array(21).fill(false));
+  console.log("initial", newSquares);
 
+  // フォーマット情報を埋める
   for (let i = 0; i < 21; ++i) {
     for (let j = 0; j < 21; ++j) {
       //   二次元コードの初期状態
       if (i === 0 || i === 6) {
         if ((j >= 0 && j < 7) || (j >= 14 && j < 21)) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       } else if (j === 0 || j === 6) {
         if ((i >= 0 && i < 7) || (i >= 14 && i < 21)) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       }
 
       if (i === 14 || i === 20) {
         if (j >= 0 && j < 7) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       } else if (j === 14 || j === 20) {
         if (i >= 0 && i < 7) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       }
 
@@ -62,44 +52,43 @@ export default function stringToTwoDimensionalBarcode(
         (i >= 2 && i < 5 && j >= 16 && j < 19) ||
         (i >= 16 && i < 19 && j >= 2 && j < 5)
       ) {
-        newSquares[i][j] = "black";
+        newSquares[i][j] = true;
       }
 
       if ((i === 6 && j % 2 === 0) || (j === 6 && i % 2 === 0)) {
-        newSquares[i][j] = "black";
+        newSquares[i][j] = true;
       }
 
-      newSquares[13][8] = "black";
-
+      newSquares[13][8] = true;
       //   形式情報
       const formatInformation: number = parseInt("101010000010010", 2);
       if (j === 8 && i < 8) {
         if (i < 6) {
           if ((formatInformation >> i) % 2 === 1) {
-            newSquares[i][j] = "black";
+            newSquares[i][j] = true;
           }
         } else if (i > 6) {
           if ((formatInformation >> (i - 1)) % 2 === 1) {
-            newSquares[i][j] = "black";
+            newSquares[i][j] = true;
           }
         }
       } else if (j === 8 && i > 13) {
         if ((formatInformation >> (i - 6)) % 2 === 1) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       } else if (i === 8 && j < 8) {
         if (j < 6) {
           if ((formatInformation >> (14 - j)) % 2 === 1) {
-            newSquares[i][j] = "black";
+            newSquares[i][j] = true;
           }
         } else if (j > 6) {
           if ((formatInformation >> (15 - j)) % 2 === 1) {
-            newSquares[i][j] = "black";
+            newSquares[i][j] = true;
           }
         }
       } else if (i === 8 && j > 13) {
         if ((formatInformation >> (20 - j)) % 2 === 1) {
-          newSquares[i][j] = "black";
+          newSquares[i][j] = true;
         }
       }
     }
@@ -113,21 +102,20 @@ export default function stringToTwoDimensionalBarcode(
   const totalData = (bitData << BigInt(10 * 8)) + errorCorrectionCode;
   for (let i = 0; i < 26 * 8; ++i) {
     if ((totalData >> BigInt(26 * 8 - i - 1)) % BigInt(2) === BigInt(1)) {
-      newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = "black";
+      newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = true;
     }
   }
-
-  // 反転処理
+  // マスク処理
   for (let i = 0; i < 26 * 8; ++i) {
     if ((orderArrayForData[i][0] + orderArrayForData[i][1]) % 2 === 0) {
       if (
-        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] === "black"
+        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] === true
       ) {
-        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = "white";
+        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = false;
       } else {
-        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = "black";
+        newSquares[orderArrayForData[i][0]][orderArrayForData[i][1]] = true;
       }
     }
   }
-  setSquares(newSquares);
+  return newSquares;
 }
