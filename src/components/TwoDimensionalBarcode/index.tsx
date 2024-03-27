@@ -24,12 +24,15 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
 );
 
 const CreateTwoDimensionalBarcode = () => {
-  const [squares, setSquares] = useState(() => {
-    const savedSquares = localStorage.getItem("squares");
-    return savedSquares
-      ? JSON.parse(savedSquares)
-      : Array(21).fill(Array(21).fill(false));
-  });
+  const [squares, setSquares] = useState(Array(21).fill(Array(21).fill(false)));
+
+  useEffect(() => {
+    // docusaurus の SSR への対応
+    const value = localStorage.getItem("squares");
+    if (value) {
+      setSquares(JSON.parse(value));
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("squares", JSON.stringify(squares));
