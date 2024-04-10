@@ -3,7 +3,7 @@ function strTo8bitData(string) {
   const bitData = stringToBitDataForEightBitByte(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
-  return [bitData, errorCorrectionCode];
+  return { bitData: bitData, errorCorrectionCode: errorCorrectionCode };
 }
 
 function answerOfNumberToAlfa(alfa) {

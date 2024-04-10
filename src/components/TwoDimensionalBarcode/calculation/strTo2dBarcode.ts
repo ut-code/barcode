@@ -4,20 +4,23 @@ import strToSjisData from "./utils/strToSjisData";
 import makeOrderArrayForData from "./utils/makeOrderArrayForData";
 import { EncodingMode } from "../types";
 
+function encodeStrByMode(inputText: string, mode: EncodingMode) {
+  if (mode === "8bit") {
+    return strTo8bitData(inputText);
+  } else if (mode === "eisu") {
+    return strToEisuData(inputText);
+  } else if (mode === "sjis") {
+    return strToSjisData(inputText);
+  } else {
+    throw new Error("Invalid mode");
+  }
+}
+
 export default function strTo2dBarcode(
   inputText: string,
   mode: EncodingMode,
 ): boolean[][] {
-  let data: bigint[] = [];
-  if (mode === "8bit") {
-    data = strTo8bitData(inputText);
-  } else if (mode === "eisu") {
-    data = strToEisuData(inputText);
-  } else if (mode === "sjis") {
-    data = strToSjisData(inputText);
-  }
-  const bitData: bigint = data[0];
-  const errorCorrectionCode: bigint = data[1];
+  const { bitData, errorCorrectionCode } = encodeStrByMode(inputText, mode);
 
   const newCells: boolean[][] = new Array(21)
     .fill(false)
