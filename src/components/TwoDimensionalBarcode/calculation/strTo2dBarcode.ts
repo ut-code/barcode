@@ -4,7 +4,13 @@ import strToSjisData from "./utils/strToSjisData";
 import makeOrderArrayForData from "./utils/makeOrderArrayForData";
 import { EncodingMode } from "../types";
 
-function encodeStrByMode(inputText: string, mode: EncodingMode) {
+/**
+ * 符号化モードに応じてデータを符号化する
+ * @param inputText - 平文
+ * @param mode - 符号化モード
+ * @returns `{符号化されたデータ, 誤り訂正符号}`
+ */
+export function encodeStrByMode(inputText: string, mode: EncodingMode) {
   if (mode === "8bit") {
     return strTo8bitData(inputText);
   } else if (mode === "eisu") {
@@ -16,11 +22,14 @@ function encodeStrByMode(inputText: string, mode: EncodingMode) {
   }
 }
 
-function insertFunctionalPattern(cells: boolean[][]) {
-  // フォーマット情報を埋める
+/**
+ * 機能パターンを挿入する
+ * @param cells - 二次元コードのセル
+ * @returns `cells` に機能パターンを挿入した二次元コードのセル
+ */
+export function insertFunctionalPattern(cells: boolean[][]) {
   for (let i = 0; i < 21; ++i) {
     for (let j = 0; j < 21; ++j) {
-      //   二次元コードの初期状態
       if (i === 0 || i === 6) {
         if ((j >= 0 && j < 7) || (j >= 14 && j < 21)) {
           cells[i][j] = true;
@@ -59,8 +68,14 @@ function insertFunctionalPattern(cells: boolean[][]) {
   return cells;
 }
 
-function insertFormat(cells: boolean[][]) {
-  // 形式情報
+/**
+ * 形式情報を挿入する
+ * @remarks
+ * Level M, マスクパターン 000 として固定
+ * @param cells - 二次元コードのセル
+ * @returns `cells` に形式情報を挿入した二次元コードのセル
+ */
+export function insertFormatInfo(cells: boolean[][]) {
   for (let i = 0; i < 21; ++i) {
     for (let j = 0; j < 21; ++j) {
       const formatInformation: number = parseInt("101010000010010", 2);
@@ -98,16 +113,23 @@ function insertFormat(cells: boolean[][]) {
   return cells;
 }
 
-function insertEncodedData(
+/**
+ * データと誤り訂正符号を挿入する
+ * @param cells - 二次元コードのセル
+ * @param inputText - 平文
+ * @param mode - 符号化モード
+ * @returns `cells` にデータと誤り訂正符号を挿入した二次元コードのセル
+ */
+export function insertEncodedData(
   cells: boolean[][],
-  bitData: bigint,
-  errorCorrectionCode: bigint,
+  inputText: string,
+  mode: EncodingMode,
 ) {
-  // データを埋めていく
+  const { bitData, errorCorrectionCode } = encodeStrByMode(inputText, mode);
+
   // データを埋める順番を示す配列を作成する。
   const orderArrayForData: number[][] = makeOrderArrayForData();
 
-  // データを埋めていく
   const totalData = (bitData << BigInt(10 * 8)) + errorCorrectionCode;
   for (let i = 0; i < 26 * 8; ++i) {
     if ((totalData >> BigInt(26 * 8 - i - 1)) % BigInt(2) === BigInt(1)) {
@@ -117,7 +139,18 @@ function insertEncodedData(
   return { cellsWithData: cells, orderArrayForData: orderArrayForData };
 }
 
-function mask(cellsWithFullData: boolean[][], orderArrayForData: number[][]) {
+/**
+ * マスク処理を行う
+ * @remarks
+ * マスクパターンは 000 （市松模様）として固定
+ * @param cellsWithFullData - 形式情報・データと誤り訂正符号を挿入した二次元コードのセル
+ * @param orderArrayForData - データを埋める順番を示す配列
+ * @returns `cellsWithFullData` にマスク処理を行った二次元コードのセル
+ */
+export function mask(
+  cellsWithFullData: boolean[][],
+  orderArrayForData: number[][],
+) {
   const cells = cellsWithFullData;
   // マスク処理
   for (let i = 0; i < 26 * 8; ++i) {
@@ -132,26 +165,25 @@ function mask(cellsWithFullData: boolean[][], orderArrayForData: number[][]) {
   return cells;
 }
 
+/**
+ * 平文を符号化モードに応じて二次元コードのデータに変換する
+ * @param inputText - 平文
+ * @param mode - 符号化モード
+ * @returns 二次元コードのセル
+ */
 export default function strTo2dBarcode(
   inputText: string,
   mode: EncodingMode,
 ): boolean[][] {
-  const { bitData, errorCorrectionCode } = encodeStrByMode(inputText, mode);
-
   const newCells: boolean[][] = new Array(21)
     .fill(false)
     .map(() => new Array(21).fill(false));
-
   const cellsWithFunctional = insertFunctionalPattern(newCells);
-  const cellsWithFunctionalAndFormat = insertFormat(cellsWithFunctional);
+  const cellsWithFunctionalAndFormat = insertFormatInfo(cellsWithFunctional);
   const {
     cellsWithData: cellsWithFullData,
     orderArrayForData: orderArrayForData,
-  } = insertEncodedData(
-    cellsWithFunctionalAndFormat,
-    bitData,
-    errorCorrectionCode,
-  );
+  } = insertEncodedData(cellsWithFunctionalAndFormat, inputText, mode);
   const maskedCells = mask(cellsWithFullData, orderArrayForData);
   return maskedCells;
 }
