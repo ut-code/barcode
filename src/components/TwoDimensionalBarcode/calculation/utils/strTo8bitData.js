@@ -1,9 +1,9 @@
 // 共に、はじめの0は省略される。例：00110 → 110
-function stringToDataForEightBitByte(string) {
+function strTo8bitData(string) {
   const bitData = stringToBitDataForEightBitByte(string);
   const dataArray = bitDataToDataArray(bitData);
   const errorCorrectionCode = bitDataToErrorCorrectionCode(dataArray);
-  return [bitData, errorCorrectionCode];
+  return { bitData: bitData, errorCorrectionCode: errorCorrectionCode };
 }
 
 function answerOfNumberToAlfa(alfa) {
@@ -153,4 +153,4 @@ function bitDataToErrorCorrectionCode(data) {
   return result;
 }
 
-export default stringToDataForEightBitByte;
+export default strTo8bitData;
