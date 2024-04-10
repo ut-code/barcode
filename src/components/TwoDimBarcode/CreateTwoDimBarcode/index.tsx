@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Playground from "../Playground";
-import strTo2dBarcode from "./calculation/strTo2dBarcode";
-import { EncodingMode } from "./types";
+import Playground from "../../Playground";
+import strTo2dBarcode from "../calculation/strTo2dBarcode";
+import { EncodingMode } from "../types";
 
 interface CellRectProps {
   x: number;
@@ -31,7 +31,7 @@ const CellRect = ({
   />
 );
 
-const CreateTwoDimensionalBarcode = () => {
+const CreateTwoDimBarcode = () => {
   const [cells, setCells] = useState<boolean[][]>(
     new Array(21).fill(false).map(() => new Array(21).fill(false)),
   );
@@ -137,4 +137,4 @@ const CreateTwoDimensionalBarcode = () => {
   );
 };
 
-export default CreateTwoDimensionalBarcode;
+export default CreateTwoDimBarcode;
