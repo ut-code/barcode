@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import Playground from "../Playground";
-import strTo2dBarcode from "./utils/strTo2dBarcode";
-import { EncodingMode } from "./types";
 
 interface CellRectProps {
   x: number;
@@ -11,33 +8,41 @@ interface CellRectProps {
   handleMouseEnter: () => void;
 }
 
-const CellRect = ({
-  x,
-  y,
-  fill,
-  toggleFill,
-  handleMouseEnter,
-}: CellRectProps) => (
-  <rect
-    x={x}
-    y={y}
-    width="20"
-    height="20"
-    fill={fill}
-    stroke="lightgray"
-    strokeWidth="0.5"
-    onMouseDown={toggleFill}
-    onMouseEnter={handleMouseEnter}
-  />
-);
+function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
+  return (
+    <rect
+      x={x}
+      y={y}
+      width="20"
+      height="20"
+      fill={fill}
+      stroke="lightgray"
+      strokeWidth="0.5"
+      onMouseDown={toggleFill}
+      onMouseEnter={handleMouseEnter}
+    />
+  );
+}
 
-const TwoDimBarcode = () => {
+interface TwoDimBarcodeProps {
+  buttonText: string;
+  buttonOnClick: () => boolean[][];
+}
+
+/**
+ * 二次元バーコードとその操作用のボタン
+ * @param props.buttonText ボタンのテキスト
+ * @param props.buttonOnClick ボタンのクリック時にセットされるセルの状態を返す関数
+ * @returns 二次元バーコードとその操作用のボタン
+ */
+export default function TwoDimBarcode({
+  buttonText,
+  buttonOnClick,
+}: TwoDimBarcodeProps) {
   const [cells, setCells] = useState<boolean[][]>(
     new Array(21).fill(false).map(() => new Array(21).fill(false)),
   );
   const [isDragging, setIsDragging] = useState(false);
-  const [messageInput, setMessageInput] = useState<string>("");
-  const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
 
   useEffect(() => {
     // docusaurus の SSR への対応
@@ -84,57 +89,36 @@ const TwoDimBarcode = () => {
   };
 
   return (
-    <>
-      <Playground title="二次元コード">
-        <div>
-          <div>
-            <p>文字を入れてみよう</p>
-            <input
-              type="text"
-              value={messageInput}
-              onChange={(e) => {
-                setMessageInput(e.target.value);
-              }}
-            />
-            <select
-              onChange={(e) => setModeSelect(e.target.value as EncodingMode)}
-            >
-              <option value="eisu">英数字モード</option>
-              <option value="8bit">8bitバイトモード</option>
-              <option value="sjis">shiftJISモード</option>
-            </select>
-            <button
-              onClick={() => {
-                setCells(strTo2dBarcode(messageInput, modeSelect));
-              }}
-            >
-              二次元コードを作成
-            </button>
-          </div>
-          <svg
-            width="422"
-            height="422"
-            style={{ border: "1px solid black", background: "lightgray" }}
-            onMouseUp={handleMouseUp}
-          >
-            {cells.map((row: boolean[], rowIndex: number) =>
-              row.map((_: boolean, colIndex: number) => (
-                <CellRect
-                  key={`${rowIndex}-${colIndex}`}
-                  x={colIndex * 20 + 1}
-                  y={rowIndex * 20 + 1}
-                  fill={cells[rowIndex][colIndex] ? "black" : "white"}
-                  toggleFill={() => handleMouseDown(rowIndex, colIndex)}
-                  handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-                />
-              )),
-            )}
-          </svg>
-        </div>
+    <div>
+      <div>
+        <button
+          onClick={() => {
+            setCells(buttonOnClick());
+          }}
+        >
+          {buttonText}
+        </button>
         <button onClick={handleReset}>リセット</button>
-      </Playground>
-    </>
+      </div>
+      <svg
+        width="422"
+        height="422"
+        style={{ border: "1px solid black", background: "lightgray" }}
+        onMouseUp={handleMouseUp}
+      >
+        {cells.map((row: boolean[], rowIndex: number) =>
+          row.map((_: boolean, colIndex: number) => (
+            <CellRect
+              key={`${rowIndex}-${colIndex}`}
+              x={colIndex * 20 + 1}
+              y={rowIndex * 20 + 1}
+              fill={cells[rowIndex][colIndex] ? "black" : "white"}
+              toggleFill={() => handleMouseDown(rowIndex, colIndex)}
+              handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+            />
+          )),
+        )}
+      </svg>
+    </div>
   );
-};
-
-export default TwoDimBarcode;
+}
