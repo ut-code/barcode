@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Playground from "../Playground";
+import strTo2dBarcode from "./calculation/strTo2dBarcode";
+import { EncodingMode } from "./types";
 
-interface SquareProps {
+interface CellRectProps {
   x: number;
   y: number;
   fill: string;
@@ -9,7 +11,13 @@ interface SquareProps {
   handleMouseEnter: () => void;
 }
 
-const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
+const CellRect = ({
+  x,
+  y,
+  fill,
+  toggleFill,
+  handleMouseEnter,
+}: CellRectProps) => (
   <rect
     x={x}
     y={y}
@@ -24,41 +32,44 @@ const Square = ({ x, y, fill, toggleFill, handleMouseEnter }: SquareProps) => (
 );
 
 const CreateTwoDimensionalBarcode = () => {
-  const [squares, setSquares] = useState(Array(21).fill(Array(21).fill(false)));
+  const [cells, setCells] = useState<boolean[][]>(
+    new Array(21).fill(false).map(() => new Array(21).fill(false)),
+  );
+  const [isDragging, setIsDragging] = useState(false);
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
 
   useEffect(() => {
     // docusaurus の SSR への対応
-    const value = localStorage.getItem("squares");
+    const value = localStorage.getItem("2dBarCodeCells");
     if (value) {
-      setSquares(JSON.parse(value));
+      setCells(JSON.parse(value));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("squares", JSON.stringify(squares));
-  }, [squares]);
+    localStorage.setItem("2dBarCodeCells", JSON.stringify(cells));
+  }, [cells]);
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  const toggleFill = (rowIndex: number, colIndex: number) => {
-    const newSquares = squares.map((row: boolean[], rIndex: number) =>
-      rIndex === rowIndex
-        ? row.map((col: boolean, cIndex: number) =>
-            cIndex === colIndex ? !col : col,
+  const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
+    const newCells = cells.map((row: boolean[], rowIndex: number) =>
+      rowIndex === targetRowIndex
+        ? row.map((isBlack: boolean, colIndex: number) =>
+            colIndex === targetColIndex ? !isBlack : isBlack,
           )
         : row,
     );
-    setSquares(newSquares);
+    setCells(newCells);
   };
 
   const handleMouseDown = (rowIndex: number, colIndex: number) => {
     setIsDragging(true);
-    toggleFill(rowIndex, colIndex);
+    toggleCellColor(rowIndex, colIndex);
   };
 
   const handleMouseEnter = (rowIndex: number, colIndex: number) => {
     if (isDragging) {
-      toggleFill(rowIndex, colIndex);
+      toggleCellColor(rowIndex, colIndex);
     }
   };
 
@@ -68,7 +79,7 @@ const CreateTwoDimensionalBarcode = () => {
 
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
-      setSquares(Array(21).fill(Array(21).fill(false)));
+      setCells(new Array(21).fill(false).map(() => new Array(21).fill(false)));
     }
   };
 
@@ -76,19 +87,43 @@ const CreateTwoDimensionalBarcode = () => {
     <>
       <Playground title="二次元コード">
         <div>
+          <div>
+            <p>文字を入れてみよう</p>
+            <input
+              type="text"
+              value={messageInput}
+              onChange={(e) => {
+                setMessageInput(e.target.value);
+              }}
+            />
+            <select
+              onChange={(e) => setModeSelect(e.target.value as EncodingMode)}
+            >
+              <option value="eisu">英数字モード</option>
+              <option value="8bit">8bitバイトモード</option>
+              <option value="sjis">shiftJISモード</option>
+            </select>
+            <button
+              onClick={() => {
+                setCells(strTo2dBarcode(messageInput, modeSelect));
+              }}
+            >
+              二次元コードを作成
+            </button>
+          </div>
           <svg
             width="422"
             height="422"
             style={{ border: "1px solid black", background: "lightgray" }}
             onMouseUp={handleMouseUp}
           >
-            {squares.map((row: string[], rowIndex: number) =>
-              row.map((_: string, colIndex: number) => (
-                <Square
+            {cells.map((row: boolean[], rowIndex: number) =>
+              row.map((_: boolean, colIndex: number) => (
+                <CellRect
                   key={`${rowIndex}-${colIndex}`}
                   x={colIndex * 20 + 1}
                   y={rowIndex * 20 + 1}
-                  fill={squares[rowIndex][colIndex] ? "black" : "white"}
+                  fill={cells[rowIndex][colIndex] ? "black" : "white"}
                   toggleFill={() => handleMouseDown(rowIndex, colIndex)}
                   handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                 />
