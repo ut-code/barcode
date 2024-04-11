@@ -1,4 +1,4 @@
-import TwoDimBarcode from "../..";
+import TwoDimBarcode from "../../TwoDimBarcode";
 import { insertFunctionalPattern } from "../../utils/strTo2dBarcode";
 import Playground from "@site/src/components/Playground";
 import createNewCells from "../../utils/createNewCells";

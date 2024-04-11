@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import TwoDimBarcode from "../..";
+import TwoDimBarcode from "../../TwoDimBarcode";
 import { EncodingMode } from "../../types";
 import strTo2dBarcode from "../../utils/strTo2dBarcode";
 import Playground from "@site/src/components/Playground";
