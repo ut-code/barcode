@@ -12,46 +12,36 @@ function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   return blocks;
 }
 
-export default function EncodingPlayground() {
+export default function ErrorCorrectionPlayground() {
   const [code, setCode] = useState<BigInt>(BigInt(0));
-  const [messageInput, setMessageInput] = useState<string>("");
-  const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
+  const [message, setMessage] = useState<string>("");
+  const [mode, setMode] = useState<EncodingMode>("eisu");
 
   useEffect(() => {
     // docusaurus の SSR への対応
-    const value = localStorage.getItem("2dBarCodeBinaryCode");
-    if (value) {
-      setCode(BigInt(value));
+    const messageValue = localStorage.getItem("2dBarCodeMessage");
+    if (messageValue) {
+      setMessage(messageValue);
+    }
+    const modeValue = localStorage.getItem("2dBarCodeMode");
+    if (modeValue) {
+      setMode(modeValue as EncodingMode);
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("2dBarCodeBinaryCode", "0b" + code.toString(2));
-    localStorage.setItem("2dBarCodeMessage", messageInput);
-    localStorage.setItem("2dBarCodeMode", modeSelect);
+    localStorage.setItem("2dBarCodeBinaryErrCorrect", "0b" + code.toString(2));
   }, [code]);
 
   return (
-    <Playground title="符号化">
+    <Playground title="誤り訂正">
       <div>
-        <input
-          type="text"
-          value={messageInput}
-          onChange={(e) => {
-            setMessageInput(e.target.value);
-          }}
-        />
-        <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
-          <option value="eisu">英数字モード</option>
-          <option value="8bit">8bitバイトモード</option>
-          <option value="sjis">Shift_JISモード</option>
-        </select>
         <button
           onClick={() => {
-            setCode(encodeStrByMode(messageInput, modeSelect).bitData);
+            setCode(encodeStrByMode(message, mode).errorCorrectionCode);
           }}
         >
-          コードを生成
+          誤り訂正を生成
         </button>
         <table>
           {bigIntTo8bitStrBlocks(code).map((block, index) => {
