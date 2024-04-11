@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import createNewCells from "./utils/createNewCells";
 
 interface CellRectProps {
   x: number;
@@ -25,37 +26,18 @@ function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
 }
 
 interface TwoDimBarcodeProps {
-  buttonText: string;
-  buttonOnClick: () => boolean[][];
+  cells: boolean[][];
+  setCells: (cells: boolean[][]) => void;
 }
 
 /**
- * 二次元バーコードとその操作用のボタン
- * @param props.buttonText ボタンのテキスト
- * @param props.buttonOnClick ボタンのクリック時にセットされるセルの状態を返す関数
- * @returns 二次元バーコードとその操作用のボタン
+ * 二次元コードとその操作用のボタン
+ * @param props.cells 二次元コードのセルの `state`
+ * @param props.setCells `state` の更新関数
+ * @returns 二次元コードとその操作用のボタン
  */
-export default function TwoDimBarcode({
-  buttonText,
-  buttonOnClick,
-}: TwoDimBarcodeProps) {
-  const [cells, setCells] = useState<boolean[][]>(
-    new Array(21).fill(false).map(() => new Array(21).fill(false)),
-  );
+export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
   const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    // docusaurus の SSR への対応
-    const value = localStorage.getItem("2dBarCodeCells");
-    if (value) {
-      setCells(JSON.parse(value));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("2dBarCodeCells", JSON.stringify(cells));
-  }, [cells]);
-
   const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
     const newCells = cells.map((row: boolean[], rowIndex: number) =>
       rowIndex === targetRowIndex
@@ -84,20 +66,13 @@ export default function TwoDimBarcode({
 
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
-      setCells(new Array(21).fill(false).map(() => new Array(21).fill(false)));
+      setCells(createNewCells());
     }
   };
 
   return (
     <div>
       <div>
-        <button
-          onClick={() => {
-            setCells(buttonOnClick());
-          }}
-        >
-          {buttonText}
-        </button>
         <button onClick={handleReset}>リセット</button>
       </div>
       <svg
