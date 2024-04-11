@@ -1,7 +1,7 @@
-import strToEisuData from "./utils/strToEisuData";
-import strTo8bitData from "./utils/strTo8bitData";
-import strToSjisData from "./utils/strToSjisData";
-import makeOrderArrayForData from "./utils/makeOrderArrayForData";
+import strToEisuData from "./strToEisuData";
+import strTo8bitData from "./strTo8bitData";
+import strToSjisData from "./strToSjisData";
+import makeOrderArrayForData from "./makeOrderArrayForData";
 import { EncodingMode } from "../types";
 
 /**
