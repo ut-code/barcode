@@ -3,6 +3,7 @@ import strTo8bitData from "./strTo8bitData";
 import strToSjisData from "./strToSjisData";
 import makeOrderArrayForData from "./makeOrderArrayForData";
 import { EncodingMode } from "../types";
+import createNewCells from "./createNewCells";
 
 /**
  * 符号化モードに応じてデータを符号化する
@@ -175,9 +176,7 @@ export default function strTo2dBarcode(
   inputText: string,
   mode: EncodingMode,
 ): boolean[][] {
-  const newCells: boolean[][] = new Array(21)
-    .fill(false)
-    .map(() => new Array(21).fill(false));
+  const newCells: boolean[][] = createNewCells();
   const cellsWithFunctional = insertFunctionalPattern(newCells);
   const cellsWithFunctionalAndFormat = insertFormatInfo(cellsWithFunctional);
   const {
