@@ -42,8 +42,8 @@ export default function InsertDataPlayground() {
     <Playground title="データを入力">
       <p>データを入力していこう</p>
       <button
-        onClick={async () => {
-          const { cellsWithData, orderArrayForData } = await insertEncodedData(
+        onClick={() => {
+          const { cellsWithData, orderArrayForData } = insertEncodedData(
             cells,
             message,
             mode,
