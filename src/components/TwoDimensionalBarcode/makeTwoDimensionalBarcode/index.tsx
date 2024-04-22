@@ -25,8 +25,6 @@ const MakeAnswer = () => {
     return Array(21).fill(Array(21).fill("white"));
   });
 
-  const [isDragging, setIsDragging] = useState(false);
-
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
       setSquares(Array(21).fill(Array(21).fill("white")));

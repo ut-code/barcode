@@ -7,7 +7,7 @@ import stringToDataForShiftJIS from "./stringToDataForShiftJIS";
 export default function stringToTwoDimensionalBarcode(
   string: string,
   squares: string[][],
-  setSquares: React.Dispatch<React.SetStateAction<string[][]>>,
+  setSquares: (value: string[][]) => void,
   mode: string,
 ) {
   let data: bigint[] = [];
