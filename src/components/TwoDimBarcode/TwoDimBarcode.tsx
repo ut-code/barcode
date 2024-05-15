@@ -37,10 +37,42 @@ function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
  * @returns 二次元コードとその操作用のボタン
  */
 export default function TwoDimBarcode() {
-  const [cells, setCells] = useState<boolean[][]>(createNewCells());
+  const [currentCells, setCurrentCells] =
+    useState<boolean[][]>(createNewCells());
+  const [undoStack, setUndoStack] = useState<boolean[][][]>([]);
+  const [redoStack, setRedoStack] = useState<boolean[][][]>([]);
+
   const [message, setMessage] = useState<string>("");
   const [mode, setMode] = useState<EncodingMode>("eisu");
   const [orderArrayForData, setOrderArrayForData] = useState<number[][]>([]);
+
+  function setCells(newCells: boolean[][]) {
+    setUndoStack([...undoStack, currentCells]);
+    setCurrentCells(newCells);
+    setRedoStack([]);
+  }
+
+  function undoCells() {
+    const newUndoStack = [...undoStack];
+    const newCurrentCells = newUndoStack.pop();
+    if (newCurrentCells === undefined) {
+      return;
+    }
+    setRedoStack([...redoStack, currentCells]);
+    setCurrentCells(newCurrentCells);
+    setUndoStack(newUndoStack);
+  }
+
+  function redoCells() {
+    const newRedoStack = [...redoStack];
+    const newCurrentCells = newRedoStack.pop();
+    if (newCurrentCells === undefined) {
+      return;
+    }
+    setUndoStack([...undoStack, currentCells]);
+    setCurrentCells(newCurrentCells);
+    setRedoStack(newRedoStack);
+  }
 
   useEffect(() => {
     // docusaurus の SSR への対応
@@ -65,8 +97,8 @@ export default function TwoDimBarcode() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("2dBarCodeCells", JSON.stringify(cells));
-  }, [cells]);
+    localStorage.setItem("2dBarCodeCells", JSON.stringify(currentCells));
+  }, [currentCells]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -78,7 +110,7 @@ export default function TwoDimBarcode() {
   const [isDragging, setIsDragging] = useState(false);
 
   const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
-    const newCells = cells.map((row: boolean[], rowIndex: number) =>
+    const newCells = currentCells.map((row: boolean[], rowIndex: number) =>
       rowIndex === targetRowIndex
         ? row.map((isBlack: boolean, colIndex: number) =>
             colIndex === targetColIndex ? !isBlack : isBlack,
@@ -122,7 +154,7 @@ export default function TwoDimBarcode() {
         <button
           onClick={() => {
             const { cellsWithData, orderArrayForData } = insertEncodedData(
-              cells,
+              currentCells,
               message,
               mode,
             );
@@ -134,18 +166,20 @@ export default function TwoDimBarcode() {
         </button>
         <button
           onClick={() => {
-            setCells(mask(cells, orderArrayForData));
+            setCells(mask(currentCells, orderArrayForData));
           }}
         >
           マスクをかける
         </button>
         <button
           onClick={() => {
-            setCells(insertFormatInfo(cells));
+            setCells(insertFormatInfo(currentCells));
           }}
         >
           形式情報を入力
         </button>
+        <button onClick={undoCells}>1つ戻る</button>
+        <button onClick={redoCells}>1つ進む</button>
         <button onClick={handleReset}>リセット</button>
       </div>
       <svg
@@ -154,13 +188,13 @@ export default function TwoDimBarcode() {
         style={{ border: "1px solid black", background: "lightgray" }}
         onMouseUp={handleMouseUp}
       >
-        {cells.map((row: boolean[], rowIndex: number) =>
+        {currentCells.map((row: boolean[], rowIndex: number) =>
           row.map((_: boolean, colIndex: number) => (
             <CellRect
               key={`${rowIndex}-${colIndex}`}
               x={colIndex * 20 + 1}
               y={rowIndex * 20 + 1}
-              fill={cells[rowIndex][colIndex] ? "black" : "white"}
+              fill={currentCells[rowIndex][colIndex] ? "black" : "white"}
               toggleFill={() => handleMouseDown(rowIndex, colIndex)}
               handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
             />
