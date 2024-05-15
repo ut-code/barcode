@@ -5,7 +5,7 @@ export default function InsertDataPlayground() {
   return (
     <Playground title="データを入力">
       <p>データを入力していこう</p>
-      <TwoDimBarcode />
+      <TwoDimBarcode enabledButton={"insertData"} />
     </Playground>
   );
 }

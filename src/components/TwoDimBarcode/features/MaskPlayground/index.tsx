@@ -5,7 +5,7 @@ export default function MaskPlayground() {
   return (
     <Playground title="マスク">
       <p>マスクをかけよう</p>
-      <TwoDimBarcode />
+      <TwoDimBarcode enabledButton={"mask"} />
     </Playground>
   );
 }

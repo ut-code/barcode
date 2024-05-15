@@ -5,7 +5,7 @@ export default function FormatInfoPlayground() {
   return (
     <Playground title="形式情報">
       <p>形式情報を入力しよう</p>
-      <TwoDimBarcode />
+      <TwoDimBarcode enabledButton={"insertFormatInfo"} />
     </Playground>
   );
 }

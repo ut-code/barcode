@@ -6,7 +6,7 @@ import {
   insertFunctionalPattern,
   mask,
 } from "./utils/strTo2dBarcode";
-import { EncodingMode } from "./types";
+import { EnabledButton, EncodingMode } from "./types";
 
 interface CellRectProps {
   x: number;
@@ -34,9 +34,14 @@ function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
 
 /**
  * 二次元コードとその操作用のボタン
+ * @param props.enabledButton 有効化するボタン
  * @returns 二次元コードとその操作用のボタン
  */
-export default function TwoDimBarcode() {
+export default function TwoDimBarcode({
+  enabledButton,
+}: {
+  enabledButton: EnabledButton;
+}) {
   const [currentCells, setCurrentCells] =
     useState<boolean[][]>(createNewCells());
   const [undoStack, setUndoStack] = useState<boolean[][][]>([]);
@@ -144,43 +149,55 @@ export default function TwoDimBarcode() {
   return (
     <div>
       <div>
-        <button
-          onClick={() => {
-            setCells(insertFunctionalPattern(createNewCells()));
-          }}
-        >
-          機能パターンを挿入
-        </button>
-        <button
-          onClick={() => {
-            const { cellsWithData, orderArrayForData } = insertEncodedData(
-              currentCells,
-              message,
-              mode,
-            );
-            setCells(cellsWithData);
-            setOrderArrayForData(orderArrayForData);
-          }}
-        >
-          入力をスキップ
-        </button>
-        <button
-          onClick={() => {
-            setCells(mask(currentCells, orderArrayForData));
-          }}
-        >
-          マスクをかける
-        </button>
-        <button
-          onClick={() => {
-            setCells(insertFormatInfo(currentCells));
-          }}
-        >
-          形式情報を入力
-        </button>
-        <button onClick={undoCells}>1つ戻る</button>
-        <button onClick={redoCells}>1つ進む</button>
-        <button onClick={handleReset}>リセット</button>
+        <div>
+          {enabledButton === "insertFunctionalPattern" && (
+            <button
+              onClick={() => {
+                setCells(insertFunctionalPattern(createNewCells()));
+              }}
+            >
+              機能パターンを挿入
+            </button>
+          )}
+          {enabledButton === "insertData" && (
+            <button
+              onClick={() => {
+                const { cellsWithData, orderArrayForData } = insertEncodedData(
+                  currentCells,
+                  message,
+                  mode,
+                );
+                setCells(cellsWithData);
+                setOrderArrayForData(orderArrayForData);
+              }}
+            >
+              入力をスキップ
+            </button>
+          )}
+          {enabledButton === "mask" && (
+            <button
+              onClick={() => {
+                setCells(mask(currentCells, orderArrayForData));
+              }}
+            >
+              マスクをかける
+            </button>
+          )}
+          {enabledButton === "insertFormatInfo" && (
+            <button
+              onClick={() => {
+                setCells(insertFormatInfo(currentCells));
+              }}
+            >
+              形式情報を入力
+            </button>
+          )}
+        </div>
+        <div>
+          <button onClick={undoCells}>1つ戻る</button>
+          <button onClick={redoCells}>1つ進む</button>
+          <button onClick={handleReset}>リセット</button>
+        </div>
       </div>
       <svg
         width="422"
