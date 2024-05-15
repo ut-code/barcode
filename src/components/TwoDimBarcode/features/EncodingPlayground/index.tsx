@@ -5,7 +5,7 @@ import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
 function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
-  const strData = bigInt.toString(2);
+  const strData = bigInt.toString(2).padStart(128, "0");
   for (let i = 0; i < strData.length; i += 8) {
     blocks.push(strData.slice(i, i + 8));
   }
@@ -16,6 +16,7 @@ export default function EncodingPlayground() {
   const [code, setCode] = useState<BigInt>(BigInt(0));
   const [messageInput, setMessageInput] = useState<string>("");
   const [modeSelect, setModeSelect] = useState<EncodingMode>("eisu");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     // docusaurus の SSR への対応
@@ -38,7 +39,23 @@ export default function EncodingPlayground() {
           type="text"
           value={messageInput}
           onChange={(e) => {
-            setMessageInput(e.target.value);
+            const input = e.target.value;
+            setErrorMessage("");
+            if (modeSelect == "eisu") {
+              if (/^[A-Z0-9$%*+-./: ]*$/.test(input)) {
+                setMessageInput(input);
+              } else {
+                setErrorMessage("規格に当てはまらない文字です。");
+              }
+            } else if (modeSelect == "8bit") {
+              if (/^[\x00-\x7F]*$/.test(input)) {
+                setMessageInput(input);
+              } else {
+                setErrorMessage("規格に当てはまらない文字です。");
+              }
+            } else if (modeSelect == "sjis") {
+              setMessageInput(input);
+            }
           }}
         />
         <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
@@ -53,6 +70,7 @@ export default function EncodingPlayground() {
         >
           コードを生成
         </button>
+        <p style={{ color: "red" }}>{errorMessage}</p>
         <table>
           {bigIntTo8bitStrBlocks(code).map((block, index) => {
             return (

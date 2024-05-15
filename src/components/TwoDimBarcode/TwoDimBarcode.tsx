@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import createNewCells from "./utils/createNewCells";
+import {
+  insertEncodedData,
+  insertFormatInfo,
+  insertFunctionalPattern,
+  mask,
+} from "./utils/strTo2dBarcode";
+import { EnabledButton, EncodingMode } from "./types";
 
 interface CellRectProps {
   x: number;
@@ -25,21 +32,90 @@ function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
   );
 }
 
-interface TwoDimBarcodeProps {
-  cells: boolean[][];
-  setCells: (cells: boolean[][]) => void;
-}
-
 /**
  * 二次元コードとその操作用のボタン
- * @param props.cells 二次元コードのセルの `state`
- * @param props.setCells `state` の更新関数
+ * @param props.enabledButton 有効化するボタン
  * @returns 二次元コードとその操作用のボタン
  */
-export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
+export default function TwoDimBarcode({
+  enabledButton,
+}: {
+  enabledButton: EnabledButton;
+}) {
+  const [currentCells, setCurrentCells] =
+    useState<boolean[][]>(createNewCells());
+  const [undoStack, setUndoStack] = useState<boolean[][][]>([]);
+  const [redoStack, setRedoStack] = useState<boolean[][][]>([]);
+
+  const [message, setMessage] = useState<string>("");
+  const [mode, setMode] = useState<EncodingMode>("eisu");
+  const [orderArrayForData, setOrderArrayForData] = useState<number[][]>([]);
+
+  function setCells(newCells: boolean[][]) {
+    setUndoStack([...undoStack, currentCells]);
+    setCurrentCells(newCells);
+    setRedoStack([]);
+  }
+
+  function undoCells() {
+    const newUndoStack = [...undoStack];
+    const newCurrentCells = newUndoStack.pop();
+    if (newCurrentCells === undefined) {
+      return;
+    }
+    setRedoStack([...redoStack, currentCells]);
+    setCurrentCells(newCurrentCells);
+    setUndoStack(newUndoStack);
+  }
+
+  function redoCells() {
+    const newRedoStack = [...redoStack];
+    const newCurrentCells = newRedoStack.pop();
+    if (newCurrentCells === undefined) {
+      return;
+    }
+    setUndoStack([...undoStack, currentCells]);
+    setCurrentCells(newCurrentCells);
+    setRedoStack(newRedoStack);
+  }
+
+  useEffect(() => {
+    // docusaurus の SSR への対応
+    const value = localStorage.getItem("2dBarCodeCells");
+    if (value) {
+      setCells(JSON.parse(value));
+    }
+    const messageValue = localStorage.getItem("2dBarCodeMessage");
+    if (messageValue) {
+      setMessage(messageValue);
+    }
+    const modeValue = localStorage.getItem("2dBarCodeMode");
+    if (modeValue) {
+      setMode(modeValue as EncodingMode);
+    }
+    const orderArrayForDataValue = localStorage.getItem(
+      "2dBarCodeOrderArrayForData",
+    );
+    if (orderArrayForDataValue) {
+      setOrderArrayForData(JSON.parse(orderArrayForDataValue));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeCells", JSON.stringify(currentCells));
+  }, [currentCells]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "2dBarCodeOrderArrayForData",
+      JSON.stringify(orderArrayForData),
+    );
+  }, [orderArrayForData]);
+
   const [isDragging, setIsDragging] = useState(false);
+
   const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
-    const newCells = cells.map((row: boolean[], rowIndex: number) =>
+    const newCells = currentCells.map((row: boolean[], rowIndex: number) =>
       rowIndex === targetRowIndex
         ? row.map((isBlack: boolean, colIndex: number) =>
             colIndex === targetColIndex ? !isBlack : isBlack,
@@ -73,7 +149,59 @@ export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
   return (
     <div>
       <div>
-        <button onClick={handleReset}>リセット</button>
+        <div>
+          {enabledButton === "insertFunctionalPattern" && (
+            <button
+              onClick={() => {
+                setCells(insertFunctionalPattern(createNewCells()));
+              }}
+            >
+              機能パターンを挿入
+            </button>
+          )}
+          {enabledButton === "insertData" && (
+            <button
+              onClick={() => {
+                const { cellsWithData, orderArrayForData } = insertEncodedData(
+                  currentCells,
+                  message,
+                  mode,
+                );
+                setCells(cellsWithData);
+                setOrderArrayForData(orderArrayForData);
+              }}
+            >
+              入力をスキップ
+            </button>
+          )}
+          {enabledButton === "mask" && (
+            <button
+              onClick={() => {
+                setCells(mask(currentCells, orderArrayForData));
+              }}
+            >
+              マスクをかける
+            </button>
+          )}
+          {enabledButton === "insertFormatInfo" && (
+            <button
+              onClick={() => {
+                setCells(insertFormatInfo(currentCells));
+              }}
+            >
+              形式情報を入力
+            </button>
+          )}
+        </div>
+        <div>
+          <button onClick={undoCells} disabled={!(undoStack.length > 0)}>
+            1つ戻る
+          </button>
+          <button onClick={redoCells} disabled={!(redoStack.length > 0)}>
+            1つ進む
+          </button>
+          <button onClick={handleReset}>リセット</button>
+        </div>
       </div>
       <svg
         width="422"
@@ -81,13 +209,13 @@ export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
         style={{ border: "1px solid black", background: "lightgray" }}
         onMouseUp={handleMouseUp}
       >
-        {cells.map((row: boolean[], rowIndex: number) =>
+        {currentCells.map((row: boolean[], rowIndex: number) =>
           row.map((_: boolean, colIndex: number) => (
             <CellRect
               key={`${rowIndex}-${colIndex}`}
               x={colIndex * 20 + 1}
               y={rowIndex * 20 + 1}
-              fill={cells[rowIndex][colIndex] ? "black" : "white"}
+              fill={currentCells[rowIndex][colIndex] ? "black" : "white"}
               toggleFill={() => handleMouseDown(rowIndex, colIndex)}
               handleMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
             />

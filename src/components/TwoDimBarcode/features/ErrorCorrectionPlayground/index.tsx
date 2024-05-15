@@ -5,7 +5,7 @@ import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
 function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
-  const strData = bigInt.toString(2);
+  const strData = bigInt.toString(2).padStart(80, "0");
   for (let i = 0; i < strData.length; i += 8) {
     blocks.push(strData.slice(i, i + 8));
   }
