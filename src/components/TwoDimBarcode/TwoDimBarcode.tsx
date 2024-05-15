@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import createNewCells from "./utils/createNewCells";
+import {
+  insertEncodedData,
+  insertFormatInfo,
+  insertFunctionalPattern,
+  mask,
+} from "./utils/strTo2dBarcode";
+import { EncodingMode } from "./types";
 
 interface CellRectProps {
   x: number;
@@ -25,19 +32,51 @@ function CellRect({ x, y, fill, toggleFill, handleMouseEnter }: CellRectProps) {
   );
 }
 
-interface TwoDimBarcodeProps {
-  cells: boolean[][];
-  setCells: (cells: boolean[][]) => void;
-}
-
 /**
  * 二次元コードとその操作用のボタン
- * @param props.cells 二次元コードのセルの `state`
- * @param props.setCells `state` の更新関数
  * @returns 二次元コードとその操作用のボタン
  */
-export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
+export default function TwoDimBarcode() {
+  const [cells, setCells] = useState<boolean[][]>(createNewCells());
+  const [message, setMessage] = useState<string>("");
+  const [mode, setMode] = useState<EncodingMode>("eisu");
+  const [orderArrayForData, setOrderArrayForData] = useState<number[][]>([]);
+
+  useEffect(() => {
+    // docusaurus の SSR への対応
+    const value = localStorage.getItem("2dBarCodeCells");
+    if (value) {
+      setCells(JSON.parse(value));
+    }
+    const messageValue = localStorage.getItem("2dBarCodeMessage");
+    if (messageValue) {
+      setMessage(messageValue);
+    }
+    const modeValue = localStorage.getItem("2dBarCodeMode");
+    if (modeValue) {
+      setMode(modeValue as EncodingMode);
+    }
+    const orderArrayForDataValue = localStorage.getItem(
+      "2dBarCodeOrderArrayForData",
+    );
+    if (orderArrayForDataValue) {
+      setOrderArrayForData(JSON.parse(orderArrayForDataValue));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeCells", JSON.stringify(cells));
+  }, [cells]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "2dBarCodeOrderArrayForData",
+      JSON.stringify(orderArrayForData),
+    );
+  }, [orderArrayForData]);
+
   const [isDragging, setIsDragging] = useState(false);
+
   const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
     const newCells = cells.map((row: boolean[], rowIndex: number) =>
       rowIndex === targetRowIndex
@@ -73,6 +112,40 @@ export default function TwoDimBarcode({ cells, setCells }: TwoDimBarcodeProps) {
   return (
     <div>
       <div>
+        <button
+          onClick={() => {
+            setCells(insertFunctionalPattern(createNewCells()));
+          }}
+        >
+          機能パターンを挿入
+        </button>
+        <button
+          onClick={() => {
+            const { cellsWithData, orderArrayForData } = insertEncodedData(
+              cells,
+              message,
+              mode,
+            );
+            setCells(cellsWithData);
+            setOrderArrayForData(orderArrayForData);
+          }}
+        >
+          入力をスキップ
+        </button>
+        <button
+          onClick={() => {
+            setCells(mask(cells, orderArrayForData));
+          }}
+        >
+          マスクをかける
+        </button>
+        <button
+          onClick={() => {
+            setCells(insertFormatInfo(cells));
+          }}
+        >
+          形式情報を入力
+        </button>
         <button onClick={handleReset}>リセット</button>
       </div>
       <svg
