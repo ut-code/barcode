@@ -194,8 +194,12 @@ export default function TwoDimBarcode({
           )}
         </div>
         <div>
-          <button onClick={undoCells}>1つ戻る</button>
-          <button onClick={redoCells}>1つ進む</button>
+          <button onClick={undoCells} disabled={!(undoStack.length > 0)}>
+            1つ戻る
+          </button>
+          <button onClick={redoCells} disabled={!(redoStack.length > 0)}>
+            1つ進む
+          </button>
           <button onClick={handleReset}>リセット</button>
         </div>
       </div>
