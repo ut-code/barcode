@@ -7,10 +7,24 @@ import CalculateLeadingDigitPlayground from "../../../src/components/LinearBarco
 
 # Leading Digit
 
-さっきの謎のnumber set AとBは、これのためにあった。とりあえず、どちらのセットかを確認してみよう。これは、簡単ですね。
+先ほどの説明の通り「左側のキャラクタ」にはどういう訳か、AとBの２種類の表し方がありました。
 
-<CalculateNumberSetTypePlayground />
+なぜ２種類も表し方があったかというと、この「リーディングディジット」のためです。
 
-これを元に、leading digitを計算してみよう。
+リーディングディジットは左側の６つのキャラクタの種類に依存して、自動的に決定されます。
+
+例えば、日本国内で使われる「リーディングディジット」は「４」ですが、\
+４の場合、キャラクタの並びは次のようになります。
+「 A B A A B B 」
+
+{
+//リーディングディジットの表を入れたいです。
+}
+
+{
+//<CalculateNumberSetTypePlayground />
+}
+
+これを元に、leading digitを計算することができます。
 
 <CalculateLeadingDigitPlayground />
