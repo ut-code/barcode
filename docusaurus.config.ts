@@ -97,7 +97,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} 二次元コードを体験してみよう！ Built with Docusaurus.`,
+      copyright: `QR コードは株式会社デンソーウェーブの登録商標です。<br />Copyright © ${new Date().getFullYear()} 二次元コードを体験してみよう！ Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
