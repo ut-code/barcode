@@ -7,12 +7,19 @@ import LinearBarcodeEAN13 from "../../../src/components/LinearBarcode/LinearBarc
 
 # 一次元コードとは。
 
-要するにバーコードのことです。こういうやつです。
+バーコードとも呼ばれるこの「一次元コード」は、その名の通り「線」の太さと配置によってデータを表現できます。
+
+私達がよく目にする下の画像は、一次元コードの中でも13桁の数字を表す「JAN-13」というものです。
 
 <p style={{ width: "350px" }}>
   {new LinearBarcodeEAN13([4, 5, 6, 9, 9, 5, 1, 1, 1, 6, 1, 7]).render()}
 </p>
 
-とりあえず、下のプレイグラウンドで遊んでみてください。数字を入力欄に入力したら、対応する一次元コードが表示されます。これから、これの仕組みを解説していきます。
+まずは、下のプレイグラウンドで自由に遊んでみましょう。
+
+数字を入力欄に入力したら、対応する一次元コードが表示されます。
+
+これから、これの仕組みを解説していきます。
 
 <CreateLinearBarcodeFromDigitsPlayground />
+/home/ss/utcode/barcode/docs/01-linear-barcode
