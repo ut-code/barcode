@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { EncodingMode } from "../../types";
 import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
-function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
+export function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
   const strData = bigInt.toString(2).padStart(128, "0");
   for (let i = 0; i < strData.length; i += 8) {
@@ -35,6 +35,10 @@ export default function EncodingPlayground() {
   return (
     <Playground title="符号化">
       <div>
+        <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
+          <option value="eisu">英数字モード</option>
+          <option value="sjis">8ビットバイトモード</option>
+        </select>
         <input
           type="text"
           value={messageInput}
@@ -42,27 +46,25 @@ export default function EncodingPlayground() {
             const input = e.target.value;
             setErrorMessage("");
             if (modeSelect == "eisu") {
-              if (/^[A-Z0-9$%*+-./: ]*$/.test(input)) {
+              if (/^[A-Z0-9$%*+-./: ]{0,20}$/.test(input)) {
                 setMessageInput(input);
               } else {
-                setErrorMessage("規格に当てはまらない文字です。");
+                setErrorMessage(
+                  "英数字モードでは、大文字のアルファベット・数字・一部の記号が使用できます。また、20文字以内で入力してください。",
+                );
               }
-            } else if (modeSelect == "8bit") {
-              if (/^[\x00-\x7F]*$/.test(input)) {
+            }
+            if (modeSelect == "sjis") {
+              if (/^.{0,14}$/.test(input)) {
                 setMessageInput(input);
               } else {
-                setErrorMessage("規格に当てはまらない文字です。");
+                setErrorMessage(
+                  "8ビットバイトモードでは、14文字以内で入力してください。",
+                );
               }
-            } else if (modeSelect == "sjis") {
-              setMessageInput(input);
             }
           }}
         />
-        <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
-          <option value="eisu">英数字モード</option>
-          <option value="8bit">8bitバイトモード</option>
-          <option value="sjis">Shift_JISモード</option>
-        </select>
         <button
           onClick={() => {
             setCode(encodeStrByMode(messageInput, modeSelect).bitData);
@@ -72,16 +74,18 @@ export default function EncodingPlayground() {
         </button>
         <p style={{ color: "red" }}>{errorMessage}</p>
         <table>
-          {bigIntTo8bitStrBlocks(code).map((block, index) => {
-            return (
-              <tr key={index}>
-                <td>
-                  <code>{block}</code>
-                </td>
-                <td>{parseInt(block, 2)}</td>
-              </tr>
-            );
-          })}
+          <tbody>
+            {bigIntTo8bitStrBlocks(code).map((block, index) => {
+              return (
+                <tr key={index}>
+                  <td>
+                    <code>{block}</code>
+                  </td>
+                  <td>{parseInt(block, 2)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       </div>
     </Playground>
