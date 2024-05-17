@@ -10,7 +10,7 @@ const config: Config = {
   favicon: "img/favicon.svg",
 
   url: "https://ut-code.github.io",
-  baseUrl: "/barcode/",
+  baseUrl: "/qrcode/",
 
   organizationName: "ut-code",
   projectName: "barcode",
