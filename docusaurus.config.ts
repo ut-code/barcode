@@ -5,15 +5,15 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
 const config: Config = {
-  title: "二次元コードを体験してみよう！",
-  tagline: "二次元コードは面白い！",
+  title: "QRコードを体験してみよう！",
+  tagline: "QRコードは面白い！",
   favicon: "img/favicon.svg",
 
   url: "https://ut-code.github.io",
   baseUrl: "/qrcode/",
 
   organizationName: "ut-code",
-  projectName: "barcode",
+  projectName: "qrcode",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -29,7 +29,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          editUrl: "https://github.com/ut-code/barcode/tree/main/",
+          editUrl: "https://github.com/ut-code/qrcode/tree/main/",
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
         },
@@ -43,9 +43,9 @@ const config: Config = {
   themeConfig: {
     image: "img/social-card.jpg",
     navbar: {
-      title: "二次元コードを体験してみよう！",
+      title: "QRコードを体験してみよう！",
       logo: {
-        alt: "二次元コードを体験してみよう！ ロゴ",
+        alt: "QRコードを体験してみよう！ ロゴ",
         src: "img/logo.svg",
       },
       items: [
@@ -56,7 +56,7 @@ const config: Config = {
           label: "チュートリアル",
         },
         {
-          href: "https://github.com/ut-code/barcode",
+          href: "https://github.com/ut-code/qrcode",
           label: "GitHub",
           position: "right",
         },
@@ -92,12 +92,12 @@ const config: Config = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/ut-code/barcode",
+              href: "https://github.com/ut-code/qrcode",
             },
           ],
         },
       ],
-      copyright: `QR コードは株式会社デンソーウェーブの登録商標です。<br />Copyright © ${new Date().getFullYear()} 二次元コードを体験してみよう！ Built with Docusaurus.`,
+      copyright: `QRコードは株式会社デンソーウェーブの登録商標です。<br />Copyright © ${new Date().getFullYear()} QRコードを体験してみよう！ Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
