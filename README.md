@@ -1,7 +1,7 @@
-# 二次元コードを体験してみよう！
+# QRコードを体験してみよう！
 
-[![CI](https://github.com/ut-code/barcode/actions/workflows/ci.yml/badge.svg)](https://github.com/ut-code/barcode/actions/workflows/ci.yml)
-[![Deploy](https://github.com/ut-code/barcode/actions/workflows/deploy.yml/badge.svg)](https://github.com/ut-code/barcode/actions/workflows/deploy.yml)
+[![CI](https://github.com/ut-code/qrcode/actions/workflows/ci.yml/badge.svg)](https://github.com/ut-code/qrcode/actions/workflows/ci.yml)
+[![Deploy](https://github.com/ut-code/qrcode/actions/workflows/deploy.yml/badge.svg)](https://github.com/ut-code/qrcode/actions/workflows/deploy.yml)
 [![React](https://img.shields.io/badge/React-555.svg?logo=react)](https://github.com/facebook/react)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC.svg?logo=typescript&logoColor=white)](https://github.com/microsoft/TypeScript)
 [![MDX](https://img.shields.io/badge/MDX-1B1F24.svg?logo=mdx)](https://mdxjs.com/)
@@ -11,7 +11,7 @@
 
 ## 概要
 
-これは、「二次元コードを体験してみよう！」のリポジトリです。[こちら](https://ut-code.github.io/barcode/)からアクセスできます。
+これは、「QRコードを体験してみよう！」のリポジトリです。[こちら](https://ut-code.github.io/qrcode/)からアクセスできます。
 
 ## 環境構築
 
