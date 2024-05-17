@@ -20,7 +20,7 @@ export default function CreateLinearBarcodeFromDigitsPlayground(): JSX.Element {
   const linearBarcodeEAN13 = createLinearBarcodeEAN13Instance(dataCharacters);
 
   return (
-    <Playground title="Create Linear Barcode From Digits">
+    <Playground title="数字からバーコードを作る">
       <div className={styles.dataCharactersContainer}>
         {dataCharacters.map((dataCharacter, index) => (
           <input

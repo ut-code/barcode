@@ -61,7 +61,7 @@ export default function CreateLinearBarcodeFromLinearBarcodeDataPlayground(): JS
   });
 
   return (
-    <Playground title="一次元コード">
+    <Playground title="バーコード">
       <div className={styles.symbolCharactersContainer}>
         {leftHalfSymbolCharacters.map(
           (symbolCharacter, symbolCharacterIndex) => {
@@ -103,12 +103,12 @@ export default function CreateLinearBarcodeFromLinearBarcodeDataPlayground(): JS
                 </svg>
                 <div className={styles.dataCharacterInfo}>
                   {leftHalfDigit !== null
-                    ? `digit ${leftHalfDigit}`
+                    ? `数字 ${leftHalfDigit}`
                     : "不正なキャラクタです。"}
                 </div>
                 <div className={styles.numberSetTypeInfo}>
                   {numberSetType !== null
-                    ? `セット ${numberSetType}`
+                    ? `ナンバーセット${numberSetType}`
                     : "不正なキャラクタです。"}
                 </div>
               </div>
@@ -154,10 +154,10 @@ export default function CreateLinearBarcodeFromLinearBarcodeDataPlayground(): JS
                 </svg>
                 <div className={styles.dataCharacterInfo}>
                   {rightHalfDigit !== null
-                    ? `digit ${rightHalfDigit}`
+                    ? `数字 ${rightHalfDigit}`
                     : "不正なキャラクタです。"}
                 </div>
-                <div className={styles.numberSetTypeInfo}>セット C</div>
+                <div className={styles.numberSetTypeInfo}>ナンバーセットC</div>
               </div>
             );
           },
@@ -166,7 +166,7 @@ export default function CreateLinearBarcodeFromLinearBarcodeDataPlayground(): JS
       <div className={styles.linearBarcode}>
         {linearBarcodeEAN13 !== null
           ? linearBarcodeEAN13.render()
-          : "不正なモジュールパターンです。"}
+          : "不正なパターンです。"}
       </div>
     </Playground>
   );
