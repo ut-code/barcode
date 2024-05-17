@@ -5,26 +5,29 @@ sidebar_position: 5
 import CalculateNumberSetTypePlayground from "../../../src/components/LinearBarcode/CalculateNumberSetTypePlayground";
 import CalculateLeadingDigitPlayground from "../../../src/components/LinearBarcode/CalculateLeadingDigitPlayground";
 
-# Leading Digit
+# リーディングデジット
 
-先ほどの説明の通り「左側のキャラクタ」にはどういう訳か、AとBの２種類の表し方がありました。
+先ほど説明した通り左側のキャラクタには、ナンバーセットAとナンバーセットBの2つの表がありました。
 
-なぜ２種類も表し方があったかというと、この「リーディングディジット」のためです。
+このように2つの表があったのは、このリーディングデジットのためです。
 
-リーディングディジットは左側の６つのキャラクタの種類に依存して、自動的に決定されます。
+リーディングデジットは、左側のキャラクタ6つに使われているそれぞれの表の種類に応じて決まります。例えば、リーディングデジットが「4」になるようにするには、キャラクタを作るのに使う表の種類は左から「ABAABB」となります。ちなみに、日本国内のバーコードのリーディングデジットは「4」になっています。
 
-例えば、日本国内で使われる「リーディングディジット」は「４」ですが、\
-４の場合、キャラクタの並びは次のようになります。
-「 A B A A B B 」
+リーディングデジットと、表の種類の組み合わせは次の表のようになっています。
 
-{
-//リーディングディジットの表を入れたいです。
-}
+| 数字 | 表の種類 |
+| ---- | -------- |
+| 0    | AAAAAA   |
+| 1    | AABABB   |
+| 2    | AABBAB   |
+| 3    | AABBBA   |
+| 4    | ABAABB   |
+| 5    | ABBAAB   |
+| 6    | ABBBAA   |
+| 7    | ABABAB   |
+| 8    | ABABBA   |
+| 9    | ABBABA   |
 
-{
-//<CalculateNumberSetTypePlayground />
-}
-
-これを元に、leading digitを計算することができます。
+それぞれの文字をクリックすると文字が反転します。表の種類のパターンによって、どのようなリーディングデジットになるのか確かめてみてください。
 
 <CalculateLeadingDigitPlayground />

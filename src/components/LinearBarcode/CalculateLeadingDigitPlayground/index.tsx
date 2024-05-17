@@ -23,7 +23,7 @@ export default function CalculateLeadingDigitPlayground(): JSX.Element {
   const leadingDigit = createLeadingDigit(numberSetTypes);
 
   return (
-    <Playground title="Leading Digit">
+    <Playground title="リーディングデジット">
       <svg viewBox="0 0 60 10" className={styles.numberSetTypesContainer}>
         {numberSetTypes.map((numberSetType, index) => (
           <text
@@ -43,7 +43,7 @@ export default function CalculateLeadingDigitPlayground(): JSX.Element {
       </svg>
       <div>
         {leadingDigit !== null
-          ? `leading digitは${leadingDigit}です。`
+          ? `リーディングデジットは${leadingDigit}です。`
           : "不正なセット列です。"}
       </div>
     </Playground>
