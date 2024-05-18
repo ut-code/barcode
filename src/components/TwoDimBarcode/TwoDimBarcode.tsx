@@ -175,7 +175,7 @@ export default function TwoDimBarcode({
   };
 
   const handleReset = () => {
-    if (window.confirm("リセットします。よろしいですか？")) {
+    if (window.confirm("入力した情報を全てリセットします。よろしいですか？")) {
       setCells(createNewCells());
       setCode(BigInt(0));
       setErrCorrect(BigInt(0));
