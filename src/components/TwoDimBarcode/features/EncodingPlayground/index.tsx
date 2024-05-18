@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { EncodingMode } from "../../types";
 import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
-export function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
+import styles from "./styles.module.css";
+
+export function bigIntTo8bitStr128Blocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
   const strData = bigInt.toString(2).padStart(128, "0");
   for (let i = 0; i < strData.length; i += 8) {
@@ -35,7 +37,10 @@ export default function EncodingPlayground() {
   return (
     <Playground title="符号化">
       <div>
-        <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
+        <select
+          onChange={(e) => setModeSelect(e.target.value as EncodingMode)}
+          className={styles.selectField}
+        >
           <option value="eisu">英数字モード</option>
           <option value="sjis">8ビットバイトモード</option>
         </select>
@@ -64,18 +69,20 @@ export default function EncodingPlayground() {
               }
             }
           }}
+          className={styles.inputField}
         />
         <button
           onClick={() => {
             setCode(encodeStrByMode(messageInput, modeSelect).bitData);
           }}
+          className={styles.primaryButton}
         >
           コードを生成
         </button>
         <p style={{ color: "red" }}>{errorMessage}</p>
         <table>
           <tbody>
-            {bigIntTo8bitStrBlocks(code).map((block, index) => {
+            {bigIntTo8bitStr128Blocks(code).map((block, index) => {
               return (
                 <tr key={index}>
                   <td>
