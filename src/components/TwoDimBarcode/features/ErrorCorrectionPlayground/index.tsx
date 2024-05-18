@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { EncodingMode } from "../../types";
 import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
+import styles from "./styles.module.css";
+
 function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
   const strData = bigInt.toString(2).padStart(80, "0");
@@ -40,20 +42,23 @@ export default function ErrorCorrectionPlayground() {
           onClick={() => {
             setCode(encodeStrByMode(message, mode).errorCorrectionCode);
           }}
+          className={styles.primaryButton}
         >
           誤り訂正を生成
         </button>
         <table>
-          {bigIntTo8bitStrBlocks(code).map((block, index) => {
-            return (
-              <tr key={index}>
-                <td>
-                  <code>{block}</code>
-                </td>
-                <td>{parseInt(block, 2)}</td>
-              </tr>
-            );
-          })}
+          <tbody>
+            {bigIntTo8bitStrBlocks(code).map((block, index) => {
+              return (
+                <tr key={index}>
+                  <td>
+                    <code>{block}</code>
+                  </td>
+                  <td>{parseInt(block, 2)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
         </table>
       </div>
     </Playground>

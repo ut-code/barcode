@@ -8,6 +8,8 @@ import {
 } from "./utils/strTo2dBarcode";
 import { EnabledButton, EncodingMode } from "./types";
 
+import styles from "./styles.module.css";
+
 interface CellRectProps {
   x: number;
   y: number;
@@ -149,12 +151,13 @@ export default function TwoDimBarcode({
   return (
     <div>
       <div>
-        <div>
+        <div style={{ margin: "4px 0" }}>
           {enabledButton === "insertFunctionalPattern" && (
             <button
               onClick={() => {
                 setCells(insertFunctionalPattern(createNewCells()));
               }}
+              className={styles.primaryButton}
             >
               機能パターンを挿入
             </button>
@@ -170,6 +173,7 @@ export default function TwoDimBarcode({
                 setCells(cellsWithData);
                 setOrderArrayForData(orderArrayForData);
               }}
+              className={styles.primaryButton}
             >
               入力をスキップ
             </button>
@@ -179,6 +183,7 @@ export default function TwoDimBarcode({
               onClick={() => {
                 setCells(mask(currentCells, orderArrayForData));
               }}
+              className={styles.primaryButton}
             >
               マスクをかける
             </button>
@@ -188,19 +193,28 @@ export default function TwoDimBarcode({
               onClick={() => {
                 setCells(insertFormatInfo(currentCells));
               }}
+              className={styles.primaryButton}
             >
               形式情報を入力
             </button>
           )}
-        </div>
-        <div>
-          <button onClick={undoCells} disabled={!(undoStack.length > 0)}>
+          <button
+            onClick={undoCells}
+            disabled={!(undoStack.length > 0)}
+            className={styles.normalButton}
+          >
             1つ戻る
           </button>
-          <button onClick={redoCells} disabled={!(redoStack.length > 0)}>
+          <button
+            onClick={redoCells}
+            disabled={!(redoStack.length > 0)}
+            className={styles.normalButton}
+          >
             1つ進む
           </button>
-          <button onClick={handleReset}>リセット</button>
+          <button onClick={handleReset} className={styles.normalButton}>
+            リセット
+          </button>
         </div>
       </div>
       <svg

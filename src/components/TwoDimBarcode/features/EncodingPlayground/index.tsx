@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { EncodingMode } from "../../types";
 import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
+import styles from "./styles.module.css";
+
 export function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
   const strData = bigInt.toString(2).padStart(128, "0");
@@ -35,7 +37,10 @@ export default function EncodingPlayground() {
   return (
     <Playground title="符号化">
       <div>
-        <select onChange={(e) => setModeSelect(e.target.value as EncodingMode)}>
+        <select
+          onChange={(e) => setModeSelect(e.target.value as EncodingMode)}
+          className={styles.selectField}
+        >
           <option value="eisu">英数字モード</option>
           <option value="sjis">8ビットバイトモード</option>
         </select>
@@ -64,11 +69,13 @@ export default function EncodingPlayground() {
               }
             }
           }}
+          className={styles.inputField}
         />
         <button
           onClick={() => {
             setCode(encodeStrByMode(messageInput, modeSelect).bitData);
           }}
+          className={styles.primaryButton}
         >
           コードを生成
         </button>

@@ -1,0 +1,28 @@
+.primaryButton {
+  background-color: #00bfff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin: 4px 4px 4px 0;
+  cursor: pointer;
+}
+
+.primaryButton:hover {
+  background-color: #009acd;
+}
+
+.inputField {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 4px 4px 4px 0;
+}
+
+.selectField {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 4px 4px 4px 0;
+}
