@@ -5,7 +5,7 @@ import { encodeStrByMode } from "../../utils/strTo2dBarcode";
 
 import styles from "./styles.module.css";
 
-function bigIntTo8bitStrBlocks(bigInt: BigInt): string[] {
+export function bigIntTo8bitStr80Blocks(bigInt: BigInt): string[] {
   const blocks: string[] = [];
   const strData = bigInt.toString(2).padStart(80, "0");
   for (let i = 0; i < strData.length; i += 8) {
@@ -48,7 +48,7 @@ export default function ErrorCorrectionPlayground() {
         </button>
         <table>
           <tbody>
-            {bigIntTo8bitStrBlocks(code).map((block, index) => {
+            {bigIntTo8bitStr80Blocks(code).map((block, index) => {
               return (
                 <tr key={index}>
                   <td>
