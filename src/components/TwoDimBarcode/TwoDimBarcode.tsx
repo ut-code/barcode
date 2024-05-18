@@ -130,6 +130,22 @@ export default function TwoDimBarcode({
     );
   }, [orderArrayForData]);
 
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeBinaryCode", code.toString());
+  }, [code]);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeBinaryErrCorrect", errCorrect.toString());
+  }, [errCorrect]);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeMessage", message);
+  }, [message]);
+
+  useEffect(() => {
+    localStorage.setItem("2dBarCodeMode", mode);
+  }, [mode]);
+
   const [isDragging, setIsDragging] = useState(false);
 
   const toggleCellColor = (targetRowIndex: number, targetColIndex: number) => {
@@ -161,6 +177,11 @@ export default function TwoDimBarcode({
   const handleReset = () => {
     if (window.confirm("リセットします。よろしいですか？")) {
       setCells(createNewCells());
+      setCode(BigInt(0));
+      setErrCorrect(BigInt(0));
+      setMessage("");
+      setMode("eisu");
+      setOrderArrayForData([]);
     }
   };
 
