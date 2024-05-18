@@ -3,6 +3,7 @@ sidebar_position: 5
 ---
 
 import InsertDataPlayground from "../../../src/components/TwoDimBarcode/features/InsertDataPlayground/index";
+import insertDataVideo from "./insert-data.mp4";
 
 # データの挿入
 
@@ -14,7 +15,7 @@ import InsertDataPlayground from "../../../src/components/TwoDimBarcode/features
 
 ![マスの入力の順番](./order.drawio.svg)
 
-例えば、`00100011` というデータがあった場合、このデータを上向きと下向きのブロックにそれぞれ挿入する場合はこのようになります。0 は白 (そのまま) で、1 は黒にします。
+例えば、`00100011` というデータがあった場合、このデータを上向きと下向きのブロックにそれぞれ挿入する場合はこのようになります。`0` は白 (そのまま) で、`1` は黒にします。
 
 ![入力の例](./example.drawio.svg)
 
@@ -22,6 +23,12 @@ import InsertDataPlayground from "../../../src/components/TwoDimBarcode/features
 
 ![ブロックの順番](./block-order.drawio.svg)
 
-「入力をスキップ」ボタンを押すと自動で入力することもできます。
+また、「入力をスキップ」ボタンを押すと自動で入力することもできます。
+
+具体的な操作は、下に示す動画を参考にしてください。ブロックを正しく入力すると、入力状態が `Good!` に変わります。
+
+<video src={insertDataVideo} controls />
+
+では、実際にデータを入力してみましょう。
 
 <InsertDataPlayground />
