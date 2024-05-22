@@ -282,17 +282,25 @@ export default function TwoDimBarcode({
             <tr>
               <th>コード</th>
               <th>入力状態</th>
+              <th>コード</th>
+              <th>入力状態</th>
             </tr>
-            {allCodes.map((block, index) => {
-              return (
-                <tr key={index} style={{ height: "10px" }}>
-                  <td>
-                    <code>{block}</code>
-                  </td>
-                  <td>{isBlockValidResult[index] ? "Good!" : "-"}</td>
-                </tr>
-              );
-            })}
+            {[...Array(Math.ceil(allCodes.length / 2))].map((_, index) => (
+              <tr key={index}>
+                <td>
+                  <code>{allCodes[index * 2]}</code>
+                </td>
+                <td>{isBlockValidResult[index * 2] ? "Good!" : "-"}</td>
+                {index * 2 + 1 < allCodes.length && (
+                  <>
+                    <td>
+                      <code>{allCodes[index * 2 + 1]}</code>
+                    </td>
+                    <td>{isBlockValidResult[index * 2 + 1] ? "Good!" : "-"}</td>
+                  </>
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
       )}
